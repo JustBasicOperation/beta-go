@@ -1,0 +1,18 @@
+mode: set
+go_exercise_project/unit/unit_testing.go:17.42,22.2 3 1
+go_exercise_project/unit/unit_testing.go:25.36,30.2 3 1
+go_exercise_project/unit/unit_testing.go:33.67,43.16 5 1
+go_exercise_project/unit/unit_testing.go:47.2,48.16 2 1
+go_exercise_project/unit/unit_testing.go:52.2,52.20 1 1
+go_exercise_project/unit/unit_testing.go:43.16,45.3 1 1
+go_exercise_project/unit/unit_testing.go:48.16,50.3 1 1
+go_exercise_project/unit/unit_testing.go:56.62,58.40 1 1
+go_exercise_project/unit/unit_testing.go:63.2,64.16 2 1
+go_exercise_project/unit/unit_testing.go:69.2,69.41 1 1
+go_exercise_project/unit/unit_testing.go:73.2,73.20 1 1
+go_exercise_project/unit/unit_testing.go:58.40,60.3 1 1
+go_exercise_project/unit/unit_testing.go:64.16,66.3 1 1
+go_exercise_project/unit/unit_testing.go:69.41,71.3 1 1
+go_exercise_project/unit/unit_testing.go:78.27,80.2 1 1
+go_exercise_project/unit/unit_testing.go:82.32,85.2 2 1
+go_exercise_project/unit/unit_testing.go:87.36,89.2 1 0
