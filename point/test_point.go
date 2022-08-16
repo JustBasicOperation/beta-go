@@ -46,6 +46,8 @@ func main() {
 
 func Func1(s *[]string) {
 	s2 := "123"
+	tmp := *s
+	tmp[0] = s2
 	*s = append(*s, s2)
 }
 
