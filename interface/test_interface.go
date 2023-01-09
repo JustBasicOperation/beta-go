@@ -38,7 +38,7 @@ type I1 interface {
 	f1()
 }
 
-func main() {
+func testInterface() {
 	// 1.接口是一种数据类型，可以接受任何类型的赋值
 	//var i interface{} = 9
 	//i = 1
