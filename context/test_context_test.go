@@ -54,3 +54,19 @@ func Test_03(t *testing.T) {
 	b := new(emptyCtx)
 	fmt.Printf("%p, %p\n", a, b)
 }
+
+func Test_testWithCancel01(t *testing.T) {
+	testWithCancel01()
+}
+
+func Test_testWithCancel02(t *testing.T) {
+	testWithCancel02()
+}
+
+func Test_testWithDeadline(t *testing.T) {
+	testWithDeadline()
+}
+
+func Test_testWithValue(t *testing.T) {
+	testWithValue()
+}
