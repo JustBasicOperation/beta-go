@@ -81,3 +81,13 @@ func testEmbeddedInterface() {
 	fmt.Println(a)
 	fmt.Println(b)
 }
+
+type People interface {
+	Show()
+}
+
+type Student struct{}
+
+func (stu *Student) Show() {
+
+}

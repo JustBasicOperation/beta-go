@@ -112,14 +112,41 @@ import (
 //	也就是说传参前的和传参后是两个不同的切片或者channel，但是切片或channel指向的底层数组是一样的
 //
 // 2.对于指针类型，传参时会复制指针的值进行传递
-func paasSlice(s1 []byte) {
-	fmt.Printf("paasSlice address: %p, value: %v\n", &s1, s1)
-	s1 = append(s1, '2')
-	fmt.Printf("paasSlice address: %p, value: %v\n", &s1, s1)
+//func passSlice(s1 []byte) {
+//	fmt.Printf("paasSlice address: %p, value: %v\n", &s1, s1)
+//	s1 = append(s1, '2')
+//	fmt.Printf("paasSlice address: %p, value: %v\n", &s1, s1)
+//}
+//
+//func passChannel(ch chan byte) {
+//	fmt.Printf("paasSlice address: %p, value: %v\n", &ch, ch)
+//	ch <- '2'
+//	fmt.Printf("paasSlice address: %p, value: %v\n", &ch, ch)
+//}
+
+// 13. go枚举类型传参
+type intEnum int32
+type intEnum2 intEnum
+
+type strEnum string
+
+const a intEnum = 1
+const b intEnum = 2
+
+func passEnumType(enum intEnum) {
+	fmt.Println(enum)
 }
 
-func paasChannel(ch chan byte) {
-	fmt.Printf("paasSlice address: %p, value: %v\n", &ch, ch)
-	ch <- '2'
-	fmt.Printf("paasSlice address: %p, value: %v\n", &ch, ch)
+func passEnumType2(enum intEnum2) {
+	fmt.Println(enum)
+}
+
+func passEnumType3(enum strEnum) {
+	fmt.Println(enum)
+}
+
+func callPassEnumType() {
+	passEnumType(1)
+	passEnumType2(2)
+	passEnumType3("123")
 }
