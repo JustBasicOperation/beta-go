@@ -39,3 +39,7 @@ import (
 func Test_callPassEnumType(t *testing.T) {
 	callPassEnumType()
 }
+
+func Test_integerLiteral(t *testing.T) {
+	integerLiteral()
+}

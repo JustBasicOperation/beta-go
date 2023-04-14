@@ -150,3 +150,43 @@ func callPassEnumType() {
 	passEnumType2(2)
 	passEnumType3("123")
 }
+
+/*
+Integer literals
+
+valid case:
+42
+4_2
+0600
+0_600
+0o600
+0O600       // second character is capital letter 'O'
+0xBadFace
+0xBad_Face
+0x_67_7a_2f_cc_40_c6
+170141183460469231731687303715884105727
+170_141183_460469_231731_687303_715884_105727
+
+invalid case:
+_42         // an identifier, not an integer literal
+42_         // invalid: _ must separate successive digits
+4__2        // invalid: only one _ at a time
+0_xBadFace  // invalid: _ must separate successive digits
+*/
+
+func integerLiteral() {
+	fmt.Println(42)
+	fmt.Println(4_2)
+	fmt.Println(0600)
+	fmt.Println(0_600)
+	fmt.Println(0o600)
+	fmt.Println(0o600)
+	fmt.Println(0xBadFace)
+	fmt.Println(0xBad_Face)
+	fmt.Println(0xBadFace)
+	fmt.Println(0x_67_7a_2f_cc_40_c6)
+	var a float64 = 170141183460469231731687303715884105727
+	fmt.Printf("%v\n", a)
+	var b float64 = 170_141183_460469_231731_687303_715884_105727
+	fmt.Printf("%v\n", b)
+}
