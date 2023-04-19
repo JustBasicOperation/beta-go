@@ -2,6 +2,7 @@ package basic_date_type
 
 import (
 	"fmt"
+	"reflect"
 )
 
 // go语言基本数据类型
@@ -92,18 +93,18 @@ import (
 //}
 
 // 11.结构体
-//type student struct {
-//	name     string
-//	age      int32
-//	relation map[string]string
-//}
-//
-//func testStruct() {
-//	s1 := &student{name: "name", relation: map[string]string{}}
-//	s2 := &student{name: "name", relation: nil}
-//	equal := reflect.DeepEqual(s1, s2)
-//	fmt.Println(equal)
-//}
+type student struct {
+	name     string
+	age      int32
+	relation map[string]string
+}
+
+func testStruct() {
+	s1 := &student{name: "name", relation: map[string]string{}}
+	s2 := &student{name: "name", relation: nil}
+	equal := reflect.DeepEqual(s1, s2)
+	fmt.Println(equal)
+}
 
 // 12. go语言传值: 值传递
 // 为什么说go语言的参数传递都是值传递？
@@ -112,17 +113,33 @@ import (
 //	也就是说传参前的和传参后是两个不同的切片或者channel，但是切片或channel指向的底层数组是一样的
 //
 // 2.对于指针类型，传参时会复制指针的值进行传递
-//func passSlice(s1 []byte) {
-//	fmt.Printf("paasSlice address: %p, value: %v\n", &s1, s1)
-//	s1 = append(s1, '2')
-//	fmt.Printf("paasSlice address: %p, value: %v\n", &s1, s1)
-//}
-//
-//func passChannel(ch chan byte) {
-//	fmt.Printf("paasSlice address: %p, value: %v\n", &ch, ch)
-//	ch <- '2'
-//	fmt.Printf("paasSlice address: %p, value: %v\n", &ch, ch)
-//}
+func passSlice(s1 []byte) {
+	fmt.Printf("paasSlice address: %p, value: %v\n", &s1, s1)
+	s1[0] = '2'
+	fmt.Printf("paasSlice address: %p, value: %v\n", &s1, s1)
+}
+
+func passChannel(ch chan byte) {
+	fmt.Printf("paasSlice address: %p, value: %v\n", &ch, ch)
+	ch <- '2'
+	fmt.Printf("paasSlice address: %p, value: %v\n", &ch, ch)
+}
+
+// 3.补充：range是副本参与循环
+func rangeWithReplica() {
+	var a = [5]int{1, 2, 3, 4, 5}
+	var r [5]int
+
+	for i, v := range a {
+		if i == 0 {
+			a[1] = 12
+			a[2] = 13
+		}
+		r[i] = v
+	}
+	fmt.Println("r = ", r)
+	fmt.Println("a = ", a)
+}
 
 // 13. go枚举类型传参
 type intEnum int32
