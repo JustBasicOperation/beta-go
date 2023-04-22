@@ -207,3 +207,29 @@ func integerLiteral() {
 	var b float64 = 170_141183_460469_231731_687303_715884_105727
 	fmt.Printf("%v\n", b)
 }
+
+/*
+测试slice语法糖
+...slice传过去的是同一个切片，并不会生成一个新的切片
+*/
+func testSlice01() {
+	s := make([]int, 5, 5)
+	s[0] = 1
+	s[1] = 2
+
+	fmt.Printf("len: %d  cap: %d pointer: %p\n", len(s), cap(s), s)
+	change(s...) // 这种形式传参，不会创建新的切片
+	fmt.Println(s)
+	fmt.Printf("len: %d  cap: %d pointer: %p\n", len(s), cap(s), s)
+	fmt.Println("-------------------------")
+	fmt.Printf("len: %d  cap: %d pointer: %p\n", len(s), cap(s), s)
+	change(s[0:2]...) // 传入的还是原来的切片地址，不会创建新的切片
+	fmt.Println(s)
+	fmt.Printf("len: %d  cap: %d pointer: %p\n", len(s), cap(s), s)
+}
+
+func change(s ...int) {
+	fmt.Printf("len: %d  cap: %d pointer: %p\n", len(s), cap(s), s)
+	s = append(s, 3)
+	fmt.Printf("len: %d  cap: %d pointer: %p\n", len(s), cap(s), s)
+}

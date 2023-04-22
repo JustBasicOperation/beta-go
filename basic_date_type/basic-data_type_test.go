@@ -49,3 +49,7 @@ func Test_integerLiteral(t *testing.T) {
 func Test_rangeWithReplica(t *testing.T) {
 	rangeWithReplica()
 }
+
+func Test_testSlice01(t *testing.T) {
+	testSlice01()
+}
