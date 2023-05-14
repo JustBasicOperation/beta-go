@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+	"unicode/utf8"
 )
 
 func Test_passSlice(t *testing.T) {
@@ -21,7 +22,7 @@ func Test_passChannel(t *testing.T) {
 	fmt.Printf("address: %p, value: %v\n", &ch, ch)
 }
 
-func Test_constantEpx(t *testing.T) {
+func Test_constantExp(t *testing.T) {
 	// 整数(int)，rune，浮点数，复数，后面的可以兼容前面的类型
 	// 隐式类型转换：15 + 25 + 5.2 -> int+int+float64 -> float64
 	const constantEpx1 = 15 + 25 + 5.2
@@ -38,6 +39,13 @@ func Test_constantEpx(t *testing.T) {
 	fmt.Println(constantEpx4, reflect.TypeOf(constantEpx4))
 }
 
+func Test_varExp(t *testing.T) {
+	var a = 0
+	fmt.Println(reflect.TypeOf(a))
+	b := returnFloat64()
+	fmt.Println(reflect.TypeOf(b))
+}
+
 func Test_callPassEnumType(t *testing.T) {
 	callPassEnumType()
 }
@@ -52,4 +60,20 @@ func Test_rangeWithReplica(t *testing.T) {
 
 func Test_testSlice01(t *testing.T) {
 	testSlice01()
+}
+
+func TestRune01(t *testing.T) {
+	s1 := "Go语言程序1234"
+	bytes := []byte(s1)
+	runeBytes := []rune(s1)
+	fmt.Printf("原始字符串：%v\n", s1)
+	fmt.Printf("对应的二进制字节序列：%v\n", bytes)
+	fmt.Printf("对应的rune序列：%v\nUnicode表示: %U\n", runeBytes, runeBytes)
+}
+
+func TestRune02(t *testing.T) {
+	s1 := "语"
+	bytes := []byte(s1)
+	r, size := utf8.DecodeRune(bytes)
+	fmt.Println(r, size)
 }

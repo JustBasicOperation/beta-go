@@ -141,7 +141,7 @@ func rangeWithReplica() {
 	fmt.Println("a = ", a)
 }
 
-// 13. go枚举类型传参
+// 13. 隐式类型转换--go枚举类型传参
 type intEnum int32
 type intEnum2 intEnum
 
@@ -166,6 +166,11 @@ func callPassEnumType() {
 	passEnumType(1)
 	passEnumType2(2)
 	passEnumType3("123")
+}
+
+// 14.隐式类型转换--返回值赋值
+func returnFloat64() float64 {
+	return 0
 }
 
 /*
