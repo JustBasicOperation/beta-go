@@ -91,3 +91,20 @@ type Student struct{}
 func (stu *Student) Show() {
 
 }
+
+/*
+测试接口元素：接口类型由一系列接口元素指定。接口元素分两种：类型元素和方法元素
+*/
+
+type ITypeElement interface {
+	int
+	uint
+	int32
+	string() string
+}
+
+type MyInt int32
+
+func (m *MyInt) String() string {
+	return "MyInt"
+}

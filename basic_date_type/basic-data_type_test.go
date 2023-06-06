@@ -77,3 +77,17 @@ func TestRune02(t *testing.T) {
 	r, size := utf8.DecodeRune(bytes)
 	fmt.Println(r, size)
 }
+
+// 可以通过s[0]的方式访问s中的字节，但是不能改变s[0]的值
+func TestStringType(t *testing.T) {
+	s := "123"
+	//s[0] = '2'
+	fmt.Println(s[0])
+
+	// 字节数组的元素取地址是合法的，但是对字符串字节数组的元素取地址是非法的
+	b := []byte{1, 2, 3}
+	p := &b[0] // 合法
+	fmt.Println(p)
+
+	//p1 := &s[0] 非法
+}

@@ -28,7 +28,8 @@ func generateRSAKey() ([]byte, []byte) {
 		Bytes: derPkix,
 	}
 	publicKey := pem.EncodeToMemory(pubBlock)
-	fmt.Println(privateKey, publicKey)
+	fmt.Println(string(privateKey))
+	fmt.Println(string(publicKey))
 	return privateKey, publicKey
 }
 
