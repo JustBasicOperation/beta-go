@@ -2,6 +2,7 @@ package channel
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -48,5 +49,23 @@ func test01() {
 	ch := fanIn(talk("A", 10), talk("B", 1000))
 	for range ch {
 		fmt.Printf("%q\n", <-ch)
+	}
+}
+
+var ch = make(chan string, 10)
+
+func produce() {
+	defer func() {
+		close(ch)
+	}()
+	time.Sleep(3 * time.Second)
+	for i := 0; i < 100; i++ {
+		ch <- strconv.FormatInt(int64(i), 10)
+	}
+}
+
+func consumer() {
+	for s := range ch {
+		fmt.Printf("consumer ch: %v\n", s)
 	}
 }

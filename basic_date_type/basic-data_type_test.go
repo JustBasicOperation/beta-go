@@ -91,3 +91,15 @@ func TestStringType(t *testing.T) {
 
 	//p1 := &s[0] 非法
 }
+
+func TestArrayAndSlice(t *testing.T) {
+	var a [10]int // 数组在声明时会分配内存并初始化零值
+	var s []int   // 切片声明后没有赋值时 == nil
+	fmt.Println(a, s == nil)
+	fmt.Printf("a: %p, s:%p\n", &a, &s)
+
+	var a1 = new([10]int)
+	var s1 = new([]int)
+	fmt.Println(a1 == nil, s1 == nil)
+	fmt.Println(a1, s1)
+}
