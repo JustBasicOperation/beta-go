@@ -42,3 +42,17 @@ func Test02(t *testing.T) {
 	}
 	fmt.Printf("p2: \n%v\n", p2)
 }
+
+func Test03(t *testing.T) {
+	//p := &Person{
+	//	FirstName:  "12",
+	//	SecondName: "34",
+	//}
+	s := "{\"Name\":\"a\", \"Person\":{\"firstName\":\"1\",\"secondName\":\"2\"}}"
+	h := &Human{}
+	if err := json.Unmarshal([]byte(s), h); err != nil {
+		fmt.Printf("err: %v", err)
+	}
+	fmt.Printf("h: %v\n", h)
+	fmt.Printf("h: %v\n", h.Person)
+}
