@@ -18,7 +18,6 @@ func Test20230220_1(t *testing.T) {
 	}
 	time.Sleep(3 * time.Second)
 	fmt.Printf("total:%d sum %d\n", total, sum)
-
 }
 
 // TestRegexp 测试regexp包的用法
