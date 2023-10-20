@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -53,4 +54,19 @@ func Test_lengthOfLongestSubstring(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestLRU(t *testing.T) {
+	cache := Constructor(2)
+	// [[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]]
+	// [null,null,null,1,null,-1,null,-1,3,4]
+	cache.Put(1, 1)
+	cache.Put(2, 2)
+	fmt.Println(cache.Get(1))
+	cache.Put(3, 3)
+	fmt.Println(cache.Get(2))
+	cache.Put(4, 4)
+	fmt.Println(cache.Get(1))
+	fmt.Println(cache.Get(3))
+	fmt.Println(cache.Get(4))
 }

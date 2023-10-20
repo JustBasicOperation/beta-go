@@ -143,3 +143,94 @@ func max(i, j int) int {
 		return j
 	}
 }
+
+type LRUCache struct {
+	cap     int
+	head    *MyListNode
+	tail    *MyListNode
+	nodeMap map[int]*MyListNode
+}
+
+type MyListNode struct {
+	pre  *MyListNode
+	next *MyListNode
+	val  int
+	key  int
+}
+
+func (this *LRUCache) remove(node *MyListNode) {
+	pre := node.pre
+	next := node.next
+
+	pre.next = next
+	next.pre = pre
+	return
+}
+
+func (this *LRUCache) removeLast() {
+	pre := this.tail.pre.pre
+	pre.next = this.tail
+	this.tail.pre = pre
+	return
+}
+
+func (this *LRUCache) addToFront(node *MyListNode) {
+	next := this.head.next
+	this.head.next = node
+	node.next = next
+
+	next.pre = node
+	node.pre = this.head
+}
+
+func Constructor(capacity int) LRUCache {
+	h := &MyListNode{}
+	t := &MyListNode{}
+
+	h.next = t
+	t.pre = h
+	res := LRUCache{
+		cap:     capacity,
+		head:    h,
+		tail:    t,
+		nodeMap: make(map[int]*MyListNode, 0),
+	}
+	return res
+}
+
+func (this *LRUCache) Get(key int) int {
+	if v, ok := this.nodeMap[key]; ok {
+		this.remove(v)
+		this.addToFront(v)
+		return v.val
+	}
+	return -1
+}
+
+func (this *LRUCache) Put(key int, value int) {
+	v, ok := this.nodeMap[key]
+	if ok {
+		// 更新值后，移动到头部
+		v.val = value
+		this.remove(v)
+		this.addToFront(v)
+		return
+	}
+	newNode := &MyListNode{}
+	newNode.val = value
+	newNode.key = key
+	// 不存在，但是容量满了
+	if len(this.nodeMap) >= this.cap {
+		lastNode := this.tail.pre
+		this.removeLast()
+		delete(this.nodeMap, lastNode.key)
+
+		this.addToFront(newNode)
+		this.nodeMap[key] = newNode
+		return
+	}
+	// 不存在，容量没满，直接添加
+	this.addToFront(newNode)
+	this.nodeMap[key] = newNode
+	return
+}
