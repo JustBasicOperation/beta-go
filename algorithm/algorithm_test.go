@@ -2,6 +2,7 @@ package algorithm
 
 import (
 	"fmt"
+	"sync"
 	"testing"
 )
 
@@ -69,4 +70,47 @@ func TestLRU(t *testing.T) {
 	fmt.Println(cache.Get(1))
 	fmt.Println(cache.Get(3))
 	fmt.Println(cache.Get(4))
+}
+
+func Test_ConcurrentPrintDataInOrder(t *testing.T) {
+	ch := make(chan string, 3)
+	count := 0
+	printSlice := []string{"A", "B", "C"}
+	wg := &sync.WaitGroup{}
+	go func() {
+		for value := range ch {
+			fmt.Println(value)
+			wg.Done()
+			count++
+		}
+	}()
+	for i := 0; i < 500; i++ {
+		for _, v := range printSlice {
+			wg.Add(1)
+			ch <- v
+		}
+	}
+	wg.Wait()
+	close(ch)
+	fmt.Println(count)
+}
+
+func TestOrderMap(t *testing.T) {
+	orderMap := NewOrderMap(3)
+	orderMap.Put(&BidirectionalList{
+		key:   "1",
+		value: 1,
+	})
+	orderMap.Put(&BidirectionalList{
+		key:   "2",
+		value: 2,
+	})
+	orderMap.Put(&BidirectionalList{
+		key:   "3",
+		value: 3,
+	})
+	fmt.Println(orderMap.Get("3").(*BidirectionalList).value)
+	orderMap.Remove("3")
+	fmt.Println(orderMap.Get("3"))
+
 }

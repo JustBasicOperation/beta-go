@@ -158,7 +158,7 @@ type MyListNode struct {
 	key  int
 }
 
-func (this *LRUCache) remove(node *MyListNode) {
+func (l *LRUCache) remove(node *MyListNode) {
 	pre := node.pre
 	next := node.next
 
@@ -167,20 +167,20 @@ func (this *LRUCache) remove(node *MyListNode) {
 	return
 }
 
-func (this *LRUCache) removeLast() {
-	pre := this.tail.pre.pre
-	pre.next = this.tail
-	this.tail.pre = pre
+func (l *LRUCache) removeLast() {
+	pre := l.tail.pre.pre
+	pre.next = l.tail
+	l.tail.pre = pre
 	return
 }
 
-func (this *LRUCache) addToFront(node *MyListNode) {
-	next := this.head.next
-	this.head.next = node
+func (l *LRUCache) addToFront(node *MyListNode) {
+	next := l.head.next
+	l.head.next = node
 	node.next = next
 
 	next.pre = node
-	node.pre = this.head
+	node.pre = l.head
 }
 
 func Constructor(capacity int) LRUCache {
@@ -198,39 +198,112 @@ func Constructor(capacity int) LRUCache {
 	return res
 }
 
-func (this *LRUCache) Get(key int) int {
-	if v, ok := this.nodeMap[key]; ok {
-		this.remove(v)
-		this.addToFront(v)
+func (l *LRUCache) Get(key int) int {
+	if v, ok := l.nodeMap[key]; ok {
+		l.remove(v)
+		l.addToFront(v)
 		return v.val
 	}
 	return -1
 }
 
-func (this *LRUCache) Put(key int, value int) {
-	v, ok := this.nodeMap[key]
+func (l *LRUCache) Put(key int, value int) {
+	v, ok := l.nodeMap[key]
 	if ok {
 		// 更新值后，移动到头部
 		v.val = value
-		this.remove(v)
-		this.addToFront(v)
+		l.remove(v)
+		l.addToFront(v)
 		return
 	}
 	newNode := &MyListNode{}
 	newNode.val = value
 	newNode.key = key
 	// 不存在，但是容量满了
-	if len(this.nodeMap) >= this.cap {
-		lastNode := this.tail.pre
-		this.removeLast()
-		delete(this.nodeMap, lastNode.key)
+	if len(l.nodeMap) >= l.cap {
+		lastNode := l.tail.pre
+		l.removeLast()
+		delete(l.nodeMap, lastNode.key)
 
-		this.addToFront(newNode)
-		this.nodeMap[key] = newNode
+		l.addToFront(newNode)
+		l.nodeMap[key] = newNode
 		return
 	}
 	// 不存在，容量没满，直接添加
-	this.addToFront(newNode)
-	this.nodeMap[key] = newNode
+	l.addToFront(newNode)
+	l.nodeMap[key] = newNode
 	return
+}
+
+type BidirectionalList struct {
+	pre   *BidirectionalList
+	next  *BidirectionalList
+	key   string
+	value interface{}
+}
+
+// OrderMap 有序map
+type OrderMap struct {
+	capacity int                           // 容量
+	head     *BidirectionalList            // 双向链表的头部
+	tail     *BidirectionalList            // 双向链表的尾部
+	m        map[string]*BidirectionalList // map
+}
+
+func NewOrderMap(cap int) *OrderMap {
+	head := &BidirectionalList{}
+	tail := &BidirectionalList{}
+
+	head.next = tail
+	tail.pre = head
+
+	return &OrderMap{
+		capacity: cap,
+		head:     head,
+		tail:     tail,
+		m:        make(map[string]*BidirectionalList, cap),
+	}
+}
+
+// Put 添加一个key，存在则新增
+func (o *OrderMap) Put(node *BidirectionalList) {
+	v, ok := o.m[node.key]
+	// 新增逻辑
+	if !ok {
+		// TODO 如果容量已满则需要先扩容再添加
+		next := o.head.next
+		o.head.next = node
+		node.next = next
+
+		node.pre = o.head
+		next.pre = node
+
+		o.m[node.key] = node
+		return
+	}
+	// 更新逻辑
+	v.value = node.value
+	return
+}
+
+// Remove 删除一个key
+func (o *OrderMap) Remove(key string) {
+	v, ok := o.m[key]
+	if !ok {
+		return
+	}
+	pre := v.pre
+	next := v.next
+
+	pre.next = next
+	next.pre = pre
+	delete(o.m, key)
+}
+
+// Get 获取一个key
+func (o *OrderMap) Get(key string) interface{} {
+	if v, ok := o.m[key]; ok {
+		return v
+	}
+	return nil
 }
