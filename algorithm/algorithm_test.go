@@ -114,3 +114,55 @@ func TestOrderMap(t *testing.T) {
 	fmt.Println(orderMap.Get("3"))
 
 }
+
+func Test_lengthOfLongestSubstringV2(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				s: "abcabcbb",
+			},
+			want: 3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := lengthOfLongestSubstringV2(tt.args.s); got != tt.want {
+				t.Errorf("lengthOfLongestSubstringV2() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestHeapSort(t *testing.T) {
+	type args struct {
+		arr []int
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "valid case",
+			args: args{
+				arr: []int{9, 8, 7, 6, 5, 4, 3, 2, 1},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			HeapSort(tt.args.arr)
+			// 打印一下arr
+			for _, i := range tt.args.arr {
+				fmt.Println(i)
+			}
+		})
+	}
+}

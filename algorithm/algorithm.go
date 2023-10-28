@@ -119,7 +119,39 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	return resList.Next
 }
 
+// ====================================最长无重复子串==================================
+func getMax(i, j int) int {
+	if i > j {
+		return i
+	} else {
+		return j
+	}
+}
+
+// 最长无重复子串，基础版：双重循环+临时map暴力解法
 func lengthOfLongestSubstring(s string) int {
+	if len(s) == 0 || len(s) == 1 {
+		return len(s)
+	}
+	dupMap := make(map[byte]bool)
+	max := 1
+	for i := 0; i < len(s); i++ {
+		for j := i; j < len(s); j++ {
+			if _, ok := dupMap[s[j]]; ok {
+				max = getMax(max, j-i)
+				dupMap = make(map[byte]bool) // 重置map
+				break
+			} else {
+				dupMap[s[j]] = true
+				max = getMax(max, j-i+1)
+			}
+		}
+	}
+	return max
+}
+
+// 最长无重复子串，升级版：左滑动窗口法
+func lengthOfLongestSubstringV2(s string) int {
 	right, res := -1, 0
 	tmpMap := make(map[byte]bool, len(s))
 	for left := 0; left < len(s); left++ {
@@ -130,19 +162,13 @@ func lengthOfLongestSubstring(s string) int {
 			tmpMap[s[right+1]] = true
 			right++
 		}
-		res = max(res, right+1-left)
+		res = getMax(res, right+1-left)
 	}
 
 	return res
 }
 
-func max(i, j int) int {
-	if i > j {
-		return i
-	} else {
-		return j
-	}
-}
+//====================================LRU缓存=====================================
 
 type LRUCache struct {
 	cap     int
@@ -235,6 +261,8 @@ func (l *LRUCache) Put(key int, value int) {
 	return
 }
 
+//=====================================有序map=====================================
+
 type BidirectionalList struct {
 	pre   *BidirectionalList
 	next  *BidirectionalList
@@ -306,4 +334,49 @@ func (o *OrderMap) Get(key string) interface{} {
 		return v
 	}
 	return nil
+}
+
+//================================== 堆排序 ==================================
+
+func HeapSort(arr []int) {
+	// 从下到上，从右往左，遍历所有非叶子节点，构建大顶堆
+	// 最后一个非叶子节点的索引是：len(arr)/2 - 1
+	for i := len(arr)/2 - 1; i >= 0; i-- {
+		heapify(arr, i, len(arr))
+	}
+
+	// 将堆顶元素与数组最后一个元素交换，然后重新构建大顶堆
+	for j := len(arr) - 1; j > 0; j-- {
+		arr[0], arr[j] = arr[j], arr[0]
+		heapify(arr, 0, j)
+	}
+}
+
+// 这个函数有两个作用：
+// 一是递归零次，可以调节当前非叶子节点，使得左右子节点小于父节点；
+// 二是递归多次，将当前节点的值放到合适的位置，使得大顶堆定义成立
+// curNodeIdx: 当前父节点在数组中的下标
+// length: 数组的长度
+func heapify(arr []int, curNodeIdx, length int) {
+	left := 2*curNodeIdx + 1
+	// 递归终止条件，当前节点的左子节点不存在，说明后面已经没有要比较的元素了
+	if left >= length {
+		return
+	}
+	greater := left // 左右子节点较大值的索引暂定为left
+	right := 2*curNodeIdx + 2
+	if right < length && arr[greater] < arr[right] {
+		greater = right
+	}
+	// 递归终止条件：此时说明当前节点的值已经大于左右子节点的值，到达了合适的位置，不用再递归下去了
+	if arr[greater] < arr[curNodeIdx] {
+		return
+	}
+	// 如果左右子节点中的较大值大于当前父节点的值，交换值
+	if arr[greater] > arr[curNodeIdx] {
+		arr[greater], arr[curNodeIdx] = arr[curNodeIdx], arr[greater]
+	}
+	// 走到这里说明上面的值交换逻辑一定执行到了，这个时候被交换下来的值(arr[greater])可能小于其左右子节点的值
+	// 所以需要递归继续进行调整，直到到达了合适的位置
+	heapify(arr, greater, length)
 }
