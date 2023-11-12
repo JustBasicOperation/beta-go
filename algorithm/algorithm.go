@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	"container/list"
 	"sort"
 )
 
@@ -380,3 +381,127 @@ func heapify(arr []int, curNodeIdx, length int) {
 	// 所以需要递归继续进行调整，直到到达了合适的位置
 	heapify(arr, greater, length)
 }
+
+//================================== 二叉树的三种遍历 ==================================
+
+// TreeNode 树节点
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+// PreOrderTraversal 二叉树的前序遍历(递归版)
+func PreOrderTraversal(root *TreeNode) []int {
+	if root == nil {
+		return nil
+	}
+	var res []int
+	var inOrder func(node *TreeNode)
+	inOrder = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		res = append(res, node.Val)
+		inOrder(node.Left)
+		inOrder(node.Right)
+	}
+	inOrder(root)
+	return res
+}
+
+// PreOrderTraversalV2 二叉树的前序遍历(非递归版)
+func PreOrderTraversalV2(root *TreeNode) []int {
+	if root == nil {
+		return nil
+	}
+	var res []int
+	stack := list.New()
+	stack.PushFront(root) // 根节点先入栈
+	for stack.Len() > 0 {
+		top := stack.Remove(stack.Front()).(*TreeNode) // 取出栈顶元素
+		res = append(res, top.Val)
+		// 先把右节点入栈
+		if top.Right != nil {
+			stack.PushFront(top.Right)
+		}
+		// 再把左节点入栈
+		if top.Left != nil {
+			stack.PushFront(top.Left)
+		}
+		// 重复上述步骤，直到栈为空
+	}
+	return res
+}
+
+// InOrderTraversal 二叉树的中序遍历(递归版)
+func InOrderTraversal(root *TreeNode) []int {
+	if root == nil {
+		return nil
+	}
+	var res []int
+	var inOrder func(node *TreeNode)
+	inOrder = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		inOrder(node.Left)
+		res = append(res, node.Val)
+		inOrder(node.Right)
+	}
+	inOrder(root)
+	return res
+}
+
+// InOrderTraversalV2 二叉树的中序遍历(非递归版)
+func InOrderTraversalV2(root *TreeNode) []int {
+	if root == nil {
+		return nil
+	}
+	// 整体的思路是：
+	// 1.对于每一个当前节点root，先把当前节点以及左子树的所有左节点都入栈
+	// 2.然后弹出栈顶元素，将栈顶元素的值添加到结果集中
+	// 3.将栈顶元素的右节点赋值给root，也就是转到右子树，重复上述步骤
+	var res []int
+	stack := list.New()
+	for true {
+		// 如果当前节点存在，将当前节点以及左子树的所有左节点都入栈
+		for root != nil {
+			stack.PushFront(root)
+			root = root.Left
+		}
+		// 如果栈空说明节点都遍历完了，退出循环
+		if stack.Len() <= 0 {
+			break
+		}
+		// 弹出栈顶元素，记录元素值，然后转到右节点，继续上面的步骤
+		top := stack.Remove(stack.Front()).(*TreeNode)
+		res = append(res, top.Val)
+		root = top.Right
+	}
+	return res
+}
+
+// PostOrderTraversal 二叉树后序遍历(递归版)
+func PostOrderTraversal(root *TreeNode) []int {
+	if root == nil {
+		return nil
+	}
+	var res []int
+	var postOrder func(root *TreeNode)
+	postOrder = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		postOrder(node.Left)
+		postOrder(node.Right)
+		res = append(res, node.Val)
+	}
+	postOrder(root)
+	return res
+}
+
+// PostOrderTraversalV2 二叉树后序遍历(迭代版)
+//func PostOrderTraversalV2(root *TreeNode) []int {
+//
+//}

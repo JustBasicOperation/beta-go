@@ -166,3 +166,73 @@ func TestHeapSort(t *testing.T) {
 		})
 	}
 }
+
+func TestPreOrderTraversal(t *testing.T) {
+	root := &TreeNode{
+		Val: 3,
+		Left: &TreeNode{
+			Val:   2,
+			Left:  &TreeNode{Val: 4},
+			Right: &TreeNode{Val: 5},
+		},
+		Right: &TreeNode{
+			Val:   1,
+			Left:  nil,
+			Right: nil,
+		},
+	}
+	res := PreOrderTraversal(root) // want: 32451, got: 32451
+	fmt.Println(res)
+}
+
+func TestPreOrderTraversalV2(t *testing.T) {
+	root := &TreeNode{
+		Val: 3,
+		Left: &TreeNode{
+			Val:   2,
+			Left:  &TreeNode{Val: 4},
+			Right: &TreeNode{Val: 5},
+		},
+		Right: &TreeNode{
+			Val:   1,
+			Left:  nil,
+			Right: nil,
+		},
+	}
+	res := PreOrderTraversalV2(root) // want: 32451, got: 32451
+	fmt.Println(res)
+}
+
+func TestInOrderTraversal(t *testing.T) {
+	root := &TreeNode{
+		Val: 3,
+		Left: &TreeNode{
+			Val:   2,
+			Left:  &TreeNode{Val: 4},
+			Right: &TreeNode{Val: 5},
+		},
+		Right: &TreeNode{
+			Val:   1,
+			Left:  nil,
+			Right: nil,
+		},
+	}
+	res := InOrderTraversal(root) // want: 42531
+	fmt.Println(res)
+}
+
+func TestInOrderTraversalV2(t *testing.T) {
+	root := &TreeNode{
+		Val:  3,
+		Left: nil,
+		Right: &TreeNode{
+			Val:  1,
+			Left: nil,
+			Right: &TreeNode{
+				Val: 2,
+			},
+		},
+	}
+	res := InOrderTraversalV2(root) // want: 312
+	fmt.Println(res)
+}
