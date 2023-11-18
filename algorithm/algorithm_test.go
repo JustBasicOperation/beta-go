@@ -236,3 +236,29 @@ func TestInOrderTraversalV2(t *testing.T) {
 	res := InOrderTraversalV2(root) // want: 312
 	fmt.Println(res)
 }
+
+func TestLevelOrder(t *testing.T) {
+	root := &TreeNode{
+		Val: 3,
+		Left: &TreeNode{
+			Val:   9,
+			Left:  nil,
+			Right: nil,
+		},
+		Right: &TreeNode{
+			Val: 20,
+			Left: &TreeNode{
+				Val:   15,
+				Left:  nil,
+				Right: nil,
+			},
+			Right: &TreeNode{
+				Val:   7,
+				Left:  nil,
+				Right: nil,
+			},
+		},
+	}
+	res := LevelOrderTraversal(root)
+	fmt.Println(res)
+}

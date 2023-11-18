@@ -417,19 +417,21 @@ func PreOrderTraversalV2(root *TreeNode) []int {
 	}
 	var res []int
 	stack := list.New()
-	stack.PushFront(root) // 根节点先入栈
-	for stack.Len() > 0 {
-		top := stack.Remove(stack.Front()).(*TreeNode) // 取出栈顶元素
-		res = append(res, top.Val)
-		// 先把右节点入栈
+	// 循环退出条件：遍历指针为nil并且栈为空，栈为空说明已经回到了最上层
+	for root != nil || stack.Len() > 0 {
+		// 遍历根节点的左子树，记录根节点或者左节点的值后再将它们全部入栈
+		for root != nil {
+			res = append(res, root.Val) // 记录根节点或者左节点的值
+			stack.PushFront(root)
+			root = root.Left
+		}
+		// 弹出的栈顶元素有两种情况：根节点或者根节点的左节点
+		// 这两种情况都不需要记录值，因为前面遍历的时候已经记录过了
+		top := stack.Remove(stack.Front()).(*TreeNode)
+		// 如果是根节点，并且有右节点，遍历指针指向右节点，转到右子树重复上面的步骤，
 		if top.Right != nil {
-			stack.PushFront(top.Right)
+			root = top.Right
 		}
-		// 再把左节点入栈
-		if top.Left != nil {
-			stack.PushFront(top.Left)
-		}
-		// 重复上述步骤，直到栈为空
 	}
 	return res
 }
@@ -458,26 +460,22 @@ func InOrderTraversalV2(root *TreeNode) []int {
 	if root == nil {
 		return nil
 	}
-	// 整体的思路是：
-	// 1.对于每一个当前节点root，先把当前节点以及左子树的所有左节点都入栈
-	// 2.然后弹出栈顶元素，将栈顶元素的值添加到结果集中
-	// 3.将栈顶元素的右节点赋值给root，也就是转到右子树，重复上述步骤
 	var res []int
 	stack := list.New()
-	for true {
-		// 如果当前节点存在，将当前节点以及左子树的所有左节点都入栈
+	// 循环退出条件：遍历指针为nil并且栈为空，栈为空说明已经回到了最上层
+	for root != nil || stack.Len() > 0 {
+		// 遍历根节点的左子树，将根节点和所有左节点都入栈
 		for root != nil {
 			stack.PushFront(root)
 			root = root.Left
 		}
-		// 如果栈空说明节点都遍历完了，退出循环
-		if stack.Len() <= 0 {
-			break
-		}
-		// 弹出栈顶元素，记录元素值，然后转到右节点，继续上面的步骤
+		// 弹出的栈顶元素有两种情况：根节点或者根节点的左节点
 		top := stack.Remove(stack.Front()).(*TreeNode)
+		// 无论是根节点还是根节点的左节点，处理的操作是一样，都是记录元素的值
 		res = append(res, top.Val)
-		root = top.Right
+		if top.Right != nil { // 如果存在右节点，说明是右节点，遍历指针指向右节点，转到右子树重复上面的过程
+			root = top.Right
+		}
 	}
 	return res
 }
@@ -502,6 +500,63 @@ func PostOrderTraversal(root *TreeNode) []int {
 }
 
 // PostOrderTraversalV2 二叉树后序遍历(迭代版)
-//func PostOrderTraversalV2(root *TreeNode) []int {
-//
-//}
+func PostOrderTraversalV2(root *TreeNode) []int {
+	if root == nil {
+		return []int{}
+	}
+	var prev *TreeNode
+	var res []int
+	stack := list.New()
+	// 循环终止条件：遍历指针为nil或者栈为空，栈为空说明已经回到了最上层
+	for root != nil || stack.Len() > 0 {
+		// 遍历根节点的左子树，将根节点和所有左节点都入栈
+		for root != nil {
+			stack.PushFront(root)
+			root = root.Left
+		}
+		// 走到头了，回到上一层：弹出栈顶元素
+		// 这里弹出的栈顶元素有三种情况：第一次遇到的根节点，第二次遇到的根节点，根节点的左节点
+		top := stack.Remove(stack.Front()).(*TreeNode)
+		// 将根节点的左节点和第二次遇到的根节点这两种情况合并，将prev指向当前节点，并记录当前节点的值，然后回到上一层：弹出栈顶元素
+		// top.Right == nil 说明是根节点的左节点
+		// top.Right == prev 说明是第二次遇到的根节点
+		if top.Right == nil || top.Right == prev {
+			res = append(res, top.Val)
+			prev = top
+			root = nil // 遍历指针置为nil，继续弹出栈顶元素
+		} else { // 第一次遇到的根节点，将根节点入栈，转到根节点的右子树，重复上面的步骤
+			stack.PushFront(top)
+			root = top.Right // 遍历指针指向右节点，转到根节点的右子树
+		}
+	}
+	return res
+}
+
+// LevelOrderTraversal 层序遍历
+func LevelOrderTraversal(root *TreeNode) [][]int {
+	if root == nil {
+		return nil
+	}
+	var res [][]int
+	queue := list.New()   // 队列
+	queue.PushFront(root) // 根节点先入栈，从第一层开始遍历
+	for queue.Len() > 0 {
+		// 因为每层遍历都是复用同一个队列，这里需要先记录每次循环的队列长度，此时的队列长度也就是上一层的节点个数
+		n := queue.Len()
+		var temp []int           // 保存上一层的值
+		for j := 0; j < n; j++ { // 循环n次，刚好将上一层的节点全部取出来
+			back := queue.Remove(queue.Back()).(*TreeNode)
+			temp = append(temp, back.Val)
+			// 对于出队列的每一个节点，依次将节点的左节点和右节点放入队列
+			if back.Left != nil {
+				queue.PushFront(back.Left)
+			}
+			if back.Right != nil {
+				queue.PushFront(back.Right)
+			}
+		}
+		// 保存每一层的结果
+		res = append(res, temp)
+	}
+	return res
+}
