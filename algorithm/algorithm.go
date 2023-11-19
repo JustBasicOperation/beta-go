@@ -560,3 +560,37 @@ func LevelOrderTraversal(root *TreeNode) [][]int {
 	}
 	return res
 }
+
+//================================== 二叉树中和为目标值的路径 ==================================
+
+// PathTarget ...
+func PathTarget(root *TreeNode, target int) [][]int {
+	var path []int // 保存路径中每个节点的值
+	var res [][]int
+	dfs(root, target, path, &res)
+	return res
+}
+
+func dfs(root *TreeNode, target int, path []int, res *[][]int) {
+	if root == nil {
+		return
+	}
+	path = append(path, root.Val)
+	tempPath := make([]int, 0)
+	for _, n := range path {
+		tempPath = append(tempPath, n)
+	}
+	// 计算路径和，如果满足条件，就记录下来
+	var sum int
+	for _, num := range tempPath {
+		sum += num
+	}
+	// 递归到叶子节点并且和等于target才记录结果
+	if sum == target && root.Left == nil && root.Right == nil {
+		*res = append(*res, tempPath)
+	}
+	dfs(root.Left, target, path, res)
+	dfs(root.Right, target, path, res)
+	// 本来这里应该要删除前面在path中添加的元素，方便回溯时不会对前面的路径产生干扰
+	// 但是因为go的切片特性不需要处理
+}
