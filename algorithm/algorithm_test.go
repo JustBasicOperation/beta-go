@@ -2,6 +2,7 @@ package algorithm
 
 import (
 	"fmt"
+	"reflect"
 	"sync"
 	"testing"
 )
@@ -307,4 +308,34 @@ func TestPathTarget(t *testing.T) {
 	}
 	res := PathTarget(root, 22)
 	fmt.Println(res)
+}
+
+func TestQuickSort(t *testing.T) {
+	type args struct {
+		arr []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "case01",
+			args: args{
+				arr: []int{
+					2, 5, 1, 23, 45, 1, 3, 7,
+				},
+			},
+			want: []int{
+				1, 1, 2, 3, 5, 7, 23, 45,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := QuickSort(tt.args.arr); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("QuickSort() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

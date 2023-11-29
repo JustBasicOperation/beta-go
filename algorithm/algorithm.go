@@ -65,7 +65,6 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	resList := &ListNode{}
 	pHead := resList
 	carry := 0
-	// the characteristic of last list node is ptr != nil && ptr.Next = nil
 	for l1 != nil && l2 != nil {
 		v1 := l1.Val
 		v2 := l2.Val
@@ -339,47 +338,81 @@ func (o *OrderMap) Get(key string) interface{} {
 
 //================================== 堆排序 ==================================
 
-func HeapSort(arr []int) {
-	// 从下到上，从右往左，遍历所有非叶子节点，构建大顶堆
-	// 最后一个非叶子节点的索引是：len(arr)/2 - 1
-	for i := len(arr)/2 - 1; i >= 0; i-- {
-		heapify(arr, i, len(arr))
+func HeapSort(nums []int) []int {
+	// 构建大顶堆
+	for i := len(nums)/2 - 1; i >= 0; i-- {
+		heapify(nums, i, len(nums)-1)
 	}
-
-	// 将堆顶元素与数组最后一个元素交换，然后重新构建大顶堆
-	for j := len(arr) - 1; j > 0; j-- {
-		arr[0], arr[j] = arr[j], arr[0]
-		heapify(arr, 0, j)
+	// 循环取堆顶元素，放到数组末尾
+	for j := len(nums) - 1; j > 0; j-- {
+		nums[0], nums[j] = nums[j], nums[0]
+		heapify(nums, 0, j-1)
 	}
+	return nums
 }
 
 // 这个函数有两个作用：
 // 一是递归零次，可以调节当前非叶子节点，使得左右子节点小于父节点；
 // 二是递归多次，将当前节点的值放到合适的位置，使得大顶堆定义成立
 // curNodeIdx: 当前父节点在数组中的下标
-// length: 数组的长度
-func heapify(arr []int, curNodeIdx, length int) {
-	left := 2*curNodeIdx + 1
-	// 递归终止条件，当前节点的左子节点不存在，说明后面已经没有要比较的元素了
-	if left >= length {
+// length: 待排序数组的最后一个可用下标
+func heapify(arr []int, root, length int) {
+	// 递归终止条件：root已经到了待排序数组的最后
+	if root >= length {
 		return
 	}
-	greater := left // 左右子节点较大值的索引暂定为left
-	right := 2*curNodeIdx + 2
-	if right < length && arr[greater] < arr[right] {
-		greater = right
+	left := root*2 + 1
+	right := root*2 + 2
+	maxIndex := root
+	if left <= length && arr[left] > arr[maxIndex] {
+		maxIndex = left
 	}
-	// 递归终止条件：此时说明当前节点的值已经大于左右子节点的值，到达了合适的位置，不用再递归下去了
-	if arr[greater] < arr[curNodeIdx] {
+	if right <= length && arr[right] > arr[maxIndex] {
+		maxIndex = right
+	}
+	if maxIndex == root {
 		return
 	}
-	// 如果左右子节点中的较大值大于当前父节点的值，交换值
-	if arr[greater] > arr[curNodeIdx] {
-		arr[greater], arr[curNodeIdx] = arr[curNodeIdx], arr[greater]
+	arr[maxIndex], arr[root] = arr[root], arr[maxIndex]
+	heapify(arr, maxIndex, length)
+}
+
+//================================== 快速排序 ==================================
+
+// QuickSort 常规快排
+func QuickSort(arr []int) []int {
+	quickSort(arr, 0, len(arr)-1)
+	return arr
+}
+
+func quickSort(arr []int, start, end int) {
+	// 递归终止条件：分区内的元素小于等于1
+	if start >= end {
+		return
 	}
-	// 走到这里说明上面的值交换逻辑一定执行到了，这个时候被交换下来的值(arr[greater])可能小于其左右子节点的值
-	// 所以需要递归继续进行调整，直到到达了合适的位置
-	heapify(arr, greater, length)
+	i, j := start, end
+	pivot := arr[start] // 默认取第一个作为基准数
+	for i < j {
+		// 右指针向左移动，找到第一个比mid小的数
+		for i < j && arr[j] >= pivot {
+			j--
+		}
+		// 左指针向右移动，找到第一个比mid大的数
+		for i < j && arr[i] <= pivot {
+			i++
+		}
+		// 指针没有越界，并且左指针的值大于右指针的值，交换左右指针的值
+		if i < j && arr[i] > arr[j] {
+			arr[i], arr[j] = arr[j], arr[i]
+		}
+	}
+	// 走到这里说明i==j，将mid与左指针交换
+	if arr[start] > arr[i] {
+		arr[start], arr[i] = arr[i], arr[start]
+	}
+	// 继续递归，处理后面的分区
+	quickSort(arr, start, i-1)
+	quickSort(arr, i+1, end)
 }
 
 //================================== 二叉树的三种遍历 ==================================
