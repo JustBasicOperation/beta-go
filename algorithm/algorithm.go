@@ -138,7 +138,6 @@ func lengthOfLongestSubstring(s string) int {
 	for i := 0; i < len(s); i++ {
 		for j := i; j < len(s); j++ {
 			if _, ok := dupMap[s[j]]; ok {
-				max = getMax(max, j-i)
 				dupMap = make(map[byte]bool) // 重置map
 				break
 			} else {
@@ -166,6 +165,32 @@ func lengthOfLongestSubstringV2(s string) int {
 	}
 
 	return res
+}
+
+// 最长无重复子串，闭区间双指针+哈希表
+func lengthOfLongestSubstringV3(s string) int {
+	max, left := 0, 0
+	indexMap := make(map[byte]int, len(s))
+	for right := 0; right < len(s); right++ {
+		cur := s[right]
+		if v, ok := indexMap[cur]; ok {
+			// 有重复元素，但是不在双指针范围内
+			if v < left {
+				max = getMax(max, right-left+1) // 双指针闭区间
+			} else {
+				// 有重复元素，但是在双指针范围内，左指针移动到重复元素的下一个位置
+				left = v + 1
+			}
+			// 更新重复元素的下标
+			indexMap[cur] = right
+		} else {
+			// 没有重复元素
+			max = getMax(max, right-left+1) // 双指针闭区间
+			// 新元素加入map，并记录下标
+			indexMap[cur] = right
+		}
+	}
+	return max
 }
 
 //====================================LRU缓存=====================================
@@ -394,10 +419,12 @@ func quickSort(arr []int, start, end int) {
 	pivot := arr[start] // 默认取第一个作为基准数
 	for i < j {
 		// 右指针向左移动，找到第一个比mid小的数
-		for i < j && arr[j] >= pivot {
+		for i < j && arr[j] > pivot {
 			j--
 		}
 		// 左指针向右移动，找到第一个比mid大的数
+		// 这里要用小于等于的原因是存在i==left的情况
+		// 当i==left时需要跳过继续比较后面的数，防止arr[left]和arr[i]提前交换了位置
 		for i < j && arr[i] <= pivot {
 			i++
 		}
@@ -556,7 +583,6 @@ func PostOrderTraversalV2(root *TreeNode) []int {
 		if top.Right == nil || top.Right == prev {
 			res = append(res, top.Val)
 			prev = top
-			root = nil // 遍历指针置为nil，继续弹出栈顶元素
 		} else { // 第一次遇到的根节点，将根节点入栈，转到根节点的右子树，重复上面的步骤
 			stack.PushFront(top)
 			root = top.Right // 遍历指针指向右节点，转到根节点的右子树
@@ -626,4 +652,91 @@ func dfs(root *TreeNode, target int, path []int, res *[][]int) {
 	dfs(root.Right, target, path, res)
 	// 本来这里应该要删除前面在path中添加的元素，方便回溯时不会对前面的路径产生干扰
 	// 但是因为go的切片特性不需要处理
+}
+
+//================================== 数组中第K个最大元素 ==================================
+
+// FindKthLargest 快排解法
+func FindKthLargest(arr []int, k int) int {
+	qSort(arr, 0, len(arr)-1, len(arr)-k)
+	return arr[len(arr)-k]
+}
+
+func qSort(arr []int, left, right, target int) {
+	if left >= right {
+		return
+	}
+	i, j := left, right
+	mid := arr[left]
+	for i < j {
+		for i < j && arr[j] > mid {
+			j--
+		}
+		for i < j && arr[i] <= mid {
+			i++
+		}
+		arr[i], arr[j] = arr[j], arr[i]
+	}
+	arr[i], arr[left] = arr[left], arr[i]
+	if i == target {
+		return
+	}
+	if i > target {
+		qSort(arr, left, i-1, target)
+	}
+	if i < target {
+		qSort(arr, i+1, right, target)
+	}
+}
+
+//=================================== k个一组翻转链表 =======================================
+
+func ReverseKGroup(head *ListNode, k int) *ListNode {
+	assistPtr := &ListNode{} // 定义一个辅助指针，指向head
+	assistPtr.Next = head
+
+	// 初始化双指针，前驱指针和后继指针都指向辅助指针
+	// 前驱和后继指针的目的是为了将翻转后的链表重新插入正确的位置
+	pre, end := assistPtr, assistPtr
+	count := 0
+	for end != nil {
+		// end指针指向了待翻转链表的最后一个元素
+		if count == k {
+			next := end.Next  // 先记录下一组待翻转链表的第一个元素位置
+			start := pre.Next // 确定本组待翻转链表的起始位置
+
+			end.Next = nil // 断开连接后再去翻转链表
+			pre.Next = nil // 断开连接后再去翻转链表
+
+			// 翻转链表，翻转后，start虽然还是指向本组链表的第一个元素，但是需要放到原本end的位置
+			newStart := reverse(start)
+
+			pre.Next = newStart // 左边接上
+			start.Next = next   // 右边接上
+
+			// 重置pre，end指针和count计数器
+			pre = start
+			end = start
+			count = 0
+		} else {
+			end = end.Next
+			count++
+		}
+	}
+
+	return assistPtr.Next
+}
+
+// 注意这个方法不能修改传入的head值
+func reverse(head *ListNode) *ListNode {
+	var pre *ListNode
+	cursor := head
+	for cursor != nil {
+		next := cursor.Next
+		cursor.Next = pre
+
+		pre = cursor  // pre后移一个元素
+		cursor = next // cursor后移一个元素
+	}
+	return pre // 遍历结束后pre指向了链表的最后一个元素
 }

@@ -2,6 +2,7 @@ package algorithm
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
 	"sync"
 	"testing"
@@ -337,5 +338,62 @@ func TestQuickSort(t *testing.T) {
 				t.Errorf("QuickSort() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestQuickSortBoundary(t *testing.T) {
+	var qSort func(arr []int, left, right int)
+	qSort = func(arr []int, left, right int) {
+		if left >= right {
+			return
+		}
+		rIndex := left + rand.Int()%(right-left+1)
+		arr[rIndex], arr[left] = arr[left], arr[rIndex]
+		i, j := left, right
+		mid := arr[left]
+		for i < j {
+			for i < j && arr[j] > mid {
+				j--
+			}
+			for i < j && arr[i] <= mid {
+				i++
+			}
+			arr[i], arr[j] = arr[j], arr[i]
+		}
+		arr[i], arr[left] = arr[left], arr[i]
+		qSort(arr, left, i-1)
+		qSort(arr, i+1, right)
+	}
+	nums := []int{3, 2, 1, 5, 6, 4}
+	qSort(nums, 0, len(nums)-1)
+	fmt.Println(nums)
+}
+
+func Test_lengthOfLongestSubstringV3(t *testing.T) {
+	s := "tmmzuxt"
+	fmt.Println(lengthOfLongestSubstringV3(s))
+}
+
+func TestReverseKGroup(t *testing.T) {
+	head := &ListNode{
+		Val: 1,
+		Next: &ListNode{
+			Val: 2,
+			Next: &ListNode{
+				Val: 3,
+				Next: &ListNode{
+					Val: 4,
+					Next: &ListNode{
+						Val:  5,
+						Next: nil,
+					},
+				},
+			},
+		},
+	}
+	newHead := ReverseKGroup(head, 2)
+	for newHead != nil {
+		fmt.Println(newHead.Val)
+		newHead = newHead.Next
 	}
 }
