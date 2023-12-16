@@ -2,6 +2,7 @@ package algorithm
 
 import (
 	"container/list"
+	"math/rand"
 	"sort"
 )
 
@@ -361,8 +362,9 @@ func (o *OrderMap) Get(key string) interface{} {
 	return nil
 }
 
-//================================== 堆排序 ==================================
+//================================== 排序数组 ==================================
 
+// HeapSort 堆排解法
 func HeapSort(nums []int) []int {
 	// 构建大顶堆
 	for i := len(nums)/2 - 1; i >= 0; i-- {
@@ -402,9 +404,7 @@ func heapify(arr []int, root, length int) {
 	heapify(arr, maxIndex, length)
 }
 
-//================================== 快速排序 ==================================
-
-// QuickSort 常规快排
+// QuickSort 常规快排(会超时)
 func QuickSort(arr []int) []int {
 	quickSort(arr, 0, len(arr)-1)
 	return arr
@@ -440,6 +440,46 @@ func quickSort(arr []int, start, end int) {
 	// 继续递归，处理后面的分区
 	quickSort(arr, start, i-1)
 	quickSort(arr, i+1, end)
+}
+
+// 优化版，不会超时
+func quickSortV2(arr []int, start, end int) {
+	// 递归终止条件，分区内元素小于等于1
+	if start >= end {
+		return
+	}
+	left, right := start, end
+
+	midIdx := (rand.Int() % (right - start + 1)) + left // 随机选择基准数的下标
+	arr[midIdx], arr[left] = arr[left], arr[midIdx]     // 将随机的基准数换到最左边，下面的逻辑保持不变
+
+	mid := arr[left]
+	for left < right {
+		// 从右往左找到一个小于mid的数的下标
+		for left < right && arr[right] > mid {
+			right--
+		}
+		// 从左往右找到一个大于mid的数的下标
+		for left < right && arr[left] <= mid {
+			left++
+		}
+		// 走到这里说明找到了或者指针相遇了，交换左右指针的值
+		arr[left], arr[right] = arr[right], arr[left]
+	}
+	// 走到这里说明指针相遇了，将mid和指针所在位置交换，使得左边的数都小于mid，右边的数都大于mid
+	arr[left], arr[start] = arr[start], arr[left]
+
+	// 优化下中轴范围
+	for left > 0 && arr[left] == arr[left-1] {
+		left--
+	}
+	for right < len(arr)-1 && arr[right] == arr[right+1] {
+		right++
+	}
+
+	// 递归处理左分区和右分区
+	quickSort(arr, start, left-1)
+	quickSort(arr, right+1, end)
 }
 
 //================================== 二叉树的三种遍历 ==================================
