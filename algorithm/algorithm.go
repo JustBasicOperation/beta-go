@@ -479,16 +479,16 @@ func PreOrderTraversalV2(root *TreeNode) []int {
 	stack := list.New()
 	// 循环退出条件：遍历指针为nil并且栈为空，栈为空说明已经回到了最上层
 	for root != nil || stack.Len() > 0 {
-		// 遍历根节点的左子树，记录根节点或者左节点的值后再将它们全部入栈
+		// 遍历根节点的左子树，将根节点和所有左节点都入栈
 		for root != nil {
 			res = append(res, root.Val) // 记录根节点或者左节点的值
 			stack.PushFront(root)
 			root = root.Left
 		}
-		// 弹出的栈顶元素有两种情况：根节点或者根节点的左节点
+		// 弹出的栈顶元素有两种情况：有右子树的左节点，没有右子树的左节点
 		// 这两种情况都不需要记录值，因为前面遍历的时候已经记录过了
 		top := stack.Remove(stack.Front()).(*TreeNode)
-		// 如果是根节点，并且有右节点，遍历指针指向右节点，转到右子树重复上面的步骤，
+		// 如果有右子树，转到右子树重复上面的步骤，
 		if top.Right != nil {
 			root = top.Right
 		}
@@ -529,11 +529,12 @@ func InOrderTraversalV2(root *TreeNode) []int {
 			stack.PushFront(root)
 			root = root.Left
 		}
-		// 弹出的栈顶元素有两种情况：根节点或者根节点的左节点
+		// 弹出的栈顶元素有两种情况：有右子树的左节点和没有右子树的左节点
 		top := stack.Remove(stack.Front()).(*TreeNode)
-		// 无论是根节点还是根节点的左节点，处理的操作是一样，都是记录元素的值
+		// 无论左节点有没有右子树，处理的操作都是一样，都是记录元素的值
 		res = append(res, top.Val)
-		if top.Right != nil { // 如果存在右节点，说明是右节点，遍历指针指向右节点，转到右子树重复上面的过程
+		// 如果存在右子树，转到右子树重复上面的过程
+		if top.Right != nil {
 			root = top.Right
 		}
 	}
@@ -575,15 +576,15 @@ func PostOrderTraversalV2(root *TreeNode) []int {
 			root = root.Left
 		}
 		// 走到头了，回到上一层：弹出栈顶元素
-		// 这里弹出的栈顶元素有三种情况：第一次遇到的根节点，第二次遇到的根节点，根节点的左节点
+		// 这里弹出的栈顶元素有三种情况：有右子树的左节点(第一次遇到)，有右子树的左节点(第二次遇到)，左节点
 		top := stack.Remove(stack.Front()).(*TreeNode)
 		// 将根节点的左节点和第二次遇到的根节点这两种情况合并，将prev指向当前节点，并记录当前节点的值，然后回到上一层：弹出栈顶元素
-		// top.Right == nil 说明是根节点的左节点
-		// top.Right == prev 说明是第二次遇到的根节点
+		// top.Right == nil 没有右子树的左节点
+		// top.Right == prev 第二次遇有右子树的左节点
 		if top.Right == nil || top.Right == prev {
 			res = append(res, top.Val)
 			prev = top
-		} else { // 第一次遇到的根节点，将根节点入栈，转到根节点的右子树，重复上面的步骤
+		} else { // 第一次遇到有右子树的左节点，将节点入栈，转到节点的右子树，重复上面的步骤
 			stack.PushFront(top)
 			root = top.Right // 遍历指针指向右节点，转到根节点的右子树
 		}
