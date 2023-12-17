@@ -397,3 +397,10 @@ func TestReverseKGroup(t *testing.T) {
 		newHead = newHead.Next
 	}
 }
+
+func TestThreeSum(t *testing.T) {
+	nums := []int{-4, -2, 1, -5, -4, -4, 4, -2, 0, 4, 0, -2, 3, 1, -5, 0}
+	res := ThreeSum(nums)
+	fmt.Println(res)
+
+}

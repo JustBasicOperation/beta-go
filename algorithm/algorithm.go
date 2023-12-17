@@ -6,11 +6,20 @@ import (
 	"sort"
 )
 
+// ListNode 链表节点
 type ListNode struct {
 	Val  int
 	Next *ListNode
 }
 
+// TreeNode 树节点
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+// ====================================两数之和==================================
 func twoSum(nums []int, target int) []int {
 	m := make(map[int]int, len(nums))
 	for i, n := range nums {
@@ -23,39 +32,49 @@ func twoSum(nums []int, target int) []int {
 	return []int{}
 }
 
-func threeSum(nums []int) [][]int {
+// ====================================三数之和==================================
+
+// ThreeSum 三数之和，双指针解法
+// 需要保证三个位置上都不出现重复的元素
+func ThreeSum(nums []int) [][]int {
 	var res [][]int
-	// 特判
-	if len(nums) < 3 {
-		return res
-	}
-	// 排序
-	sort.SliceStable(nums, func(i, j int) bool {
-		return nums[i] < nums[j]
+	length := len(nums)
+	sort.Slice(nums, func(i int, j int) bool {
+		return nums[i] < nums[j] // 升序排序
 	})
-	if nums[0] > 0 {
-		return res
-	}
-	for i := 0; i < len(nums); i++ {
+	for i := 0; i < length; i++ {
+		// 如果当前数字和前一个数字重复的话，直接跳过，这里要和前一位数比较
 		if i > 0 && nums[i] == nums[i-1] {
 			continue
 		}
+		// 如果nums[i]大于0，后面的组合不可能有0的情况了，直接break
+		if nums[i] > 0 {
+			break
+		}
 		left := i + 1
-		right := len(nums) - 1
-		for j := i + 1; j < len(nums); j++ {
-			if left < right {
-				sum := nums[i] + nums[left] + nums[right]
-				if sum == 0 {
-					res = append(res, []int{nums[i], nums[left], nums[right]})
-					left++
-					right--
-				} else if sum > 0 {
-					right--
-				} else {
+		right := length - 1
+		for left < right {
+			// 必须在sum等于0的时候判断后面是否有重复数字并且直接跳到最后一个重复的数字
+			// 不能提前判断是否有重复数字，否则会跳过像000这样的结果
+			sum := nums[i] + nums[left] + nums[right]
+			if sum == 0 {
+				// 如果三数之和等于0，直接跳到最后一个重复的数字，这里要和后一位数比较
+				for left < right && nums[left] == nums[left+1] {
 					left++
 				}
+				// 如果三数之和等于0，直接跳到最后一个重复的数字，这里要和后一位数比较
+				for left < right && nums[right] == nums[right-1] {
+					right--
+				}
+				res = append(res, []int{nums[i], nums[left], nums[right]})
+				// 记录结果后，左右指针分别向中间移动一位
+				// 因为是排过序的，并且左右指针的元素不能重复，所以不能只移动左指针或者右指针，否则三数相加必然不等于零
+				left++
+				right--
+			} else if sum < 0 {
+				left++
 			} else {
-				break
+				right--
 			}
 		}
 	}
@@ -483,13 +502,6 @@ func quickSortV2(arr []int, start, end int) {
 }
 
 //================================== 二叉树的三种遍历 ==================================
-
-// TreeNode 树节点
-type TreeNode struct {
-	Val   int
-	Left  *TreeNode
-	Right *TreeNode
-}
 
 // PreOrderTraversal 二叉树的前序遍历(递归版)
 func PreOrderTraversal(root *TreeNode) []int {
