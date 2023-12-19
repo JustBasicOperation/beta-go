@@ -19,6 +19,14 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
+func getMax(i, j int) int {
+	if i > j {
+		return i
+	} else {
+		return j
+	}
+}
+
 // ====================================两数之和==================================
 func twoSum(nums []int, target int) []int {
 	m := make(map[int]int, len(nums))
@@ -140,13 +148,6 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 }
 
 // ====================================最长无重复子串==================================
-func getMax(i, j int) int {
-	if i > j {
-		return i
-	} else {
-		return j
-	}
-}
 
 // 最长无重复子串，基础版：双重循环+临时map暴力解法
 func lengthOfLongestSubstring(s string) int {
@@ -792,4 +793,25 @@ func reverse(head *ListNode) *ListNode {
 		cursor = next // cursor后移一个元素
 	}
 	return pre // 遍历结束后pre指向了链表的最后一个元素
+}
+
+//=================================== 最大子序和 =======================================
+
+func MaxSubArray(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	// 解法思路：动态规划
+	// max[i]表示开始到当前位置的最大子序和，根据前一位的最大子序和来判断是继续累加还是另起一段区间
+	// 状态转移方程：max[i] = MAX(max[i-1]+nums[i], nums[i])
+	max := nums[0]
+	preMax := nums[0]
+	for i := 0; i < len(nums); i++ {
+		if i > 0 {
+			curMax := getMax(preMax+nums[i], nums[i])
+			preMax = curMax
+			max = getMax(max, curMax)
+		}
+	}
+	return max
 }
