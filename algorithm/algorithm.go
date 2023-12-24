@@ -795,7 +795,7 @@ func reverse(head *ListNode) *ListNode {
 	return pre // 遍历结束后pre指向了链表的最后一个元素
 }
 
-//=================================== 最大子序和 =======================================
+//=================================== 最大子数组和 =======================================
 
 func MaxSubArray(nums []int) int {
 	if len(nums) == 0 {
@@ -814,4 +814,31 @@ func MaxSubArray(nums []int) int {
 		}
 	}
 	return max
+}
+
+// MaxSubArrayV2 解法二：线段树分治求解
+func MaxSubArrayV2(nums []int) int {
+	return get(nums, 0, len(nums)).mSum
+}
+
+type Status struct {
+	lSum int // 左端点开始的最大子段和
+	rSum int // 右端点开始的最大子段和
+	mSum int // 区间内的最大子段和
+	aSum int // 区间和
+}
+
+func get(nums []int, left, right int) Status {
+	if left == right {
+		return Status{lSum: nums[left], rSum: nums[left], mSum: nums[left], aSum: nums[left]}
+	}
+	mid := (left + right) / 2
+	lStatus := get(nums, left, mid)
+	rStatus := get(nums, mid+1, right)
+	// push up操作：分别求lSum,rSum,mSum,aSum
+	aSum := lStatus.aSum + rStatus.aSum                     // 左右子区间aSum相加
+	lSum := getMax(lStatus.lSum, lStatus.aSum+rStatus.lSum) // max(左子区间的lSum,左子区间的aSum+右子区间的lSum)
+	rSum := getMax(rStatus.rSum, rStatus.aSum+lStatus.rSum) // max(右子区间的rSum,右子区间的aSum+左子区间的rSum)
+	mSum := getMax(getMax(lStatus.mSum, rStatus.mSum), lStatus.rSum+rStatus.lSum)
+	return Status{lSum: lSum, rSum: rSum, mSum: mSum, aSum: aSum}
 }
