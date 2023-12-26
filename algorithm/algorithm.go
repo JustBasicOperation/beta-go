@@ -842,3 +842,60 @@ func get(nums []int, left, right int) Status {
 	mSum := getMax(getMax(lStatus.mSum, rStatus.mSum), lStatus.rSum+rStatus.lSum)
 	return Status{lSum: lSum, rSum: rSum, mSum: mSum, aSum: aSum}
 }
+
+//=================================== 最长递增子序列 =======================================
+
+// LengthOfLIS 动态规划解法
+func LengthOfLIS(nums []int) int {
+	// 定义dp[i]表示以nums[i]结尾的最长递增子序列
+	// 状态转移方程：dp[i] = max(1, max(dp[j])+1)，其中0 <= j < i且nums[i]>nums[j]
+	// 也就是往dp[0...i-1]中最长的上升子序列后面再加一个nums[i](需要保证nums[i]>nums[j])，dp[i]=dp[0...i-1]中的最大值+1
+	dp := make([]int, len(nums), len(nums))
+	dp[0] = 1
+	for i := 1; i < len(nums); i++ {
+		dp[i] = 1 // 默认为自己，长度为1
+		for j := 0; j < i; j++ {
+			if nums[i] > nums[j] {
+				dp[i] = getMax(dp[i], dp[j]+1)
+			}
+		}
+	}
+	var maxN int
+	for i := 0; i < len(dp); i++ {
+		if maxN < dp[i] {
+			maxN = dp[i]
+		}
+	}
+	return maxN
+}
+
+// LengthOfLISV2 解法二：贪心+二分
+func LengthOfLISV2(nums []int) int {
+	// 定义d[i]为长度为i的最长递增子序列的最后一个元素的最小值
+	d := make([]int, len(nums)+1, len(nums)+1)
+	length := 1
+	d[1] = nums[0]
+	for i := 1; i < len(nums); i++ {
+		if nums[i] > d[length] {
+			d[length+1] = nums[i]
+			length++
+		} else {
+			// 使用二分查找，在d[0...length]中找到第一个比nums[i]小的数d[j]，并更新d[j+1] = nums[i]
+			l, r, pos := 1, length, 0
+			for l <= r {
+				mid := (l + r) / 2
+				if d[mid] < nums[i] { // 当l==r并且d[mid]<nums[i]时，找到了第一个比nums[i]小的d[mid]
+					pos = mid
+					l = mid + 1
+				} else if d[mid] == nums[i] {
+					r = mid - 1
+				} else {
+					r = mid - 1
+				}
+			}
+			// 如果pos为零说明所有数都比nums[i]大，此时要将d[1]设置为nums[i]
+			d[pos+1] = nums[i]
+		}
+	}
+	return length
+}
