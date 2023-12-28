@@ -404,3 +404,37 @@ func TestThreeSum(t *testing.T) {
 	fmt.Println(res)
 
 }
+
+func TestPrintInOrder(t *testing.T) {
+	PrintInOrder()
+}
+
+func TestPrintInOrderV2(t *testing.T) {
+	PrintInOrderV2()
+}
+
+func TestReverseUrl(t *testing.T) {
+	type args struct {
+		url []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{
+			name: "valid case",
+			args: args{
+				url: []string{"w", "w", "w", ".", "1", "2", "3", "4", ".", "c", "n"},
+			},
+			want: []string{"c", "n", ".", "4", "3", "2", "1", ".", "w", "w", "w"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ReverseUrl(tt.args.url); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ReverseUrl() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

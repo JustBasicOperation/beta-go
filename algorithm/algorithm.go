@@ -2,8 +2,10 @@ package algorithm
 
 import (
 	"container/list"
+	"fmt"
 	"math/rand"
 	"sort"
+	"time"
 )
 
 // ListNode 链表节点
@@ -898,4 +900,91 @@ func LengthOfLISV2(nums []int) int {
 		}
 	}
 	return length
+}
+
+//===================================== 多线程按序打印123 =========================================
+
+func PrintInOrder() {
+	ch1 := make(chan int)
+	ch2 := make(chan int)
+	ch3 := make(chan int)
+	go func() {
+		ch3 <- 1
+	}()
+	go func() {
+		for i := 0; i < 10; i++ {
+			<-ch3
+			fmt.Println(1)
+			ch1 <- 1
+		}
+	}()
+	go func() {
+		for i := 0; i < 10; i++ {
+			<-ch1
+			fmt.Println(2)
+			ch2 <- 2
+		}
+	}()
+	go func() {
+		for i := 0; i < 10; i++ {
+			<-ch2
+			fmt.Println(3)
+			ch3 <- 3
+		}
+	}()
+	time.Sleep(3 * time.Second)
+}
+
+func PrintInOrderV2() {
+	ch := make(chan int)
+
+	go func() {
+		ch <- 1
+	}()
+	go func() {
+		for i := 0; i < 10; i++ {
+			<-ch
+			fmt.Println(1)
+			ch <- 1
+		}
+	}()
+	go func() {
+		for i := 0; i < 10; i++ {
+			<-ch
+			fmt.Println(2)
+			ch <- 2
+		}
+	}()
+	go func() {
+		for i := 0; i < 10; i++ {
+			<-ch
+			fmt.Println(3)
+			ch <- 3
+		}
+	}()
+	time.Sleep(3 * time.Second)
+}
+
+//========================================= 反转url =========================================
+
+func ReverseUrl(url []string) []string {
+	reverseStr(url, 0, len(url)-1)
+	fmt.Println(url)
+	pre := -1
+	for i := 0; i < len(url); i++ {
+		if pre == -1 && url[i] == "." {
+			reverseStr(url, 0, i-1)
+			pre = i - 1
+		}
+	}
+	return url
+}
+
+func reverseStr(str []string, start, end int) []string {
+	for start < end {
+		str[start], str[end] = str[end], str[start]
+		start++
+		end--
+	}
+	return str
 }
