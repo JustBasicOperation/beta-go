@@ -988,3 +988,81 @@ func reverseStr(str []string, start, end int) []string {
 	}
 	return str
 }
+
+//========================================= 最长递增子序列二 =========================================
+
+//========================================= 反转字符串中的单词 =========================================
+
+//========================================= 最长公共子序列 =========================================
+
+func LongestCommonSubsequence(text1 string, text2 string) int {
+	// dp[i][j]表示text[1...i]和text2[1...j]的最长公共子序列
+	// dp[i][j] = max(dp[i-1][j],dp[i][j-1]) text1[i] != text2[j]
+	// dp[i][j] = dp[i-1][j-1]+1 text[i] == text2[j]，这里不需要考虑dp[i-1][j]和dp[i][j-1]转移过去的情况了
+	// dp[i][0] = 0, dp[0][j] = 0
+	dp := make([][]int, len(text1)+1, len(text1)+1)
+	for i := 0; i <= len(text1); i++ {
+		dp[i] = make([]int, len(text2)+1, len(text2)+1)
+	}
+	for i := 0; i <= len(text1); i++ {
+		for j := 0; j <= len(text2); j++ {
+			if i == 0 {
+				dp[i][j] = 0
+				continue
+			}
+			if j == 0 {
+				dp[i][j] = 0
+				continue
+			}
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = getMax(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[len(text1)][len(text2)]
+}
+
+//========================================= 编辑距离 =========================================
+
+func MinDistance(word1 string, word2 string) int {
+	// 定义dp[i][j]表示word1的前i个字符和word2的前j个字符的最短编辑距离
+	// 此时可以认为word1[1...i]和word2[1...j已经完全相同
+	// 后续只需要考虑三种情况即可：word1加一个字符，word2加一个字符，word1和word2都加一个字符
+	// if word2[i] == word2[j] dp[i][j] = min(dp[i-1][j]+1,dp[i][j-1]+1),dp[i-1][j-1]
+	// if word1[i] != word2[j] dp[i][j] = min(dp[i-1][j]+1,dp[i][j-1]+1),dp[i-1][j-1]+1)
+	// 初始状态：dp[0][j] = j,dp[i][0] = i
+	len1 := len(word1)
+	len2 := len(word2)
+	dp := make([][]int, len1+1, len1+1)
+	for i := 0; i <= len1; i++ {
+		dp[i] = make([]int, len2+1, len2+1)
+	}
+
+	for i := 0; i <= len1; i++ {
+		for j := 0; j <= len2; j++ {
+			if i == 0 {
+				dp[i][j] = j
+				continue
+			}
+			if j == 0 {
+				dp[i][j] = i
+				continue
+			}
+			if word1[i-1] == word2[j-1] {
+				dp[i][j] = getMin(getMin(dp[i-1][j]+1, dp[i][j-1]+1), dp[i-1][j-1])
+			} else {
+				dp[i][j] = getMin(getMin(dp[i-1][j]+1, dp[i][j-1]+1), dp[i-1][j-1]+1)
+			}
+		}
+	}
+	return dp[len(word1)][len(word2)]
+}
+
+func getMin(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
