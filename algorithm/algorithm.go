@@ -858,7 +858,7 @@ func LengthOfLIS(nums []int) int {
 		dp[i] = 1 // 默认为自己，长度为1
 		for j := 0; j < i; j++ {
 			if nums[i] > nums[j] {
-				dp[i] = getMax(dp[i], dp[j]+1)
+				dp[i] = getMax(dp[i], dp[j]+1) // 这行代码可能会被执行多次，需要取其中最大的那次执行结果
 			}
 		}
 	}
@@ -991,7 +991,86 @@ func reverseStr(str []string, start, end int) []string {
 
 //========================================= 最长递增子序列二 =========================================
 
+// LengthOfLISII dp解法会超时
+func LengthOfLISII(nums []int, k int) int {
+	// 定义dp[i]为以nums[i]结尾的最长递增子序列
+	// dp[i] = max(dp[j]+1, 1) (0 <= j < i) if nums[i] - nums[j] <= k
+	dp := make([]int, len(nums), len(nums))
+	maxN := 1
+	for i := 0; i < len(nums); i++ {
+		if i == 0 {
+			dp[i] = 1
+			continue
+		}
+		dp[i] = 1
+		for j := i - 1; j >= 0; j-- {
+			if nums[i] > nums[j] && nums[i]-nums[j] <= k {
+				dp[i] = getMax(dp[i], dp[j]+1)
+			}
+		}
+		maxN = getMax(maxN, dp[i])
+	}
+	return maxN
+}
+
 //========================================= 反转字符串中的单词 =========================================
+
+func reverseWords(s string) string {
+	// 转换成字符串数组并去除空格
+	s1 := toByteArr(s)
+
+	// 原地翻转整个数组
+	reverseArr(s1, 0, len(s1)-1)
+
+	start := 0
+	// 遇到空格就翻转前面的单词
+	for i := 0; i < len(s1); i++ {
+		if s1[i] == ' ' {
+			reverseArr(s1, start, i-1)
+			start = i + 1
+		}
+	}
+	// 翻转最后一个单词
+	if start < len(s1)-1 {
+		reverseArr(s1, start, len(s1)-1)
+	}
+	return string(s1)
+}
+
+// 如果是英文字母，转成字节数组即可，这里考虑到非英文字母的情况，转成rune数组，可以处理任意的utf-8字符串
+func toByteArr(s string) []byte {
+	res := make([]byte, 0, len(s))
+	// 双指针去掉多余的空格并转换成字符串数组
+	left := 0
+	right := len(s) - 1
+	// 去除开头的空格
+	for s[left] == ' ' && left < right {
+		left++
+	}
+	// 去除末尾的空格
+	for s[right] == ' ' && left < right {
+		right--
+	}
+	// 去除中间的空格并将非空格字符添加到返回数组中
+	for left <= right {
+		if s[left] != ' ' {
+			res = append(res, s[left])
+		} else if s[left+1] != ' ' {
+			// 取中间连续空格的最后一个
+			res = append(res, s[left])
+		}
+		left++
+	}
+	return res
+}
+
+func reverseArr(s []byte, left, right int) {
+	for left < right {
+		s[left], s[right] = s[right], s[left]
+		left++
+		right--
+	}
+}
 
 //========================================= 最长公共子序列 =========================================
 
