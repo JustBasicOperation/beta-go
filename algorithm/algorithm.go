@@ -1145,3 +1145,34 @@ func getMin(x, y int) int {
 	}
 	return y
 }
+
+//========================================= 合并两个有序链表 =========================================
+
+func MergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
+	res := &ListNode{}
+	cursor := res
+	for list1 != nil && list2 != nil {
+		node1 := list1.Val
+		node2 := list2.Val
+		// 每次从两个链表中取较小的节点
+		if node1 < node2 {
+			cursor.Next = list1
+			list1 = list1.Next
+		} else {
+			cursor.Next = list2
+			list2 = list2.Next
+		}
+		cursor = cursor.Next
+	}
+	for list1 != nil {
+		cursor.Next = list1
+		list1 = list1.Next
+		cursor = cursor.Next
+	}
+	for list2 != nil {
+		cursor.Next = list2
+		list2 = list2.Next
+		cursor = cursor.Next
+	}
+	return res.Next
+}
