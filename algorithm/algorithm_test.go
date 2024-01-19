@@ -464,3 +464,50 @@ func Test_reverseWords(t *testing.T) {
 		})
 	}
 }
+
+func TestSimpleFourOperation(t *testing.T) {
+	type args struct {
+		expression []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		{
+			name: "case 1",
+			args: args{
+				expression: []string{"1", "+", "2", "*", "3", "-", "4", "/", "5", "*", "6"},
+			},
+			want: 2.1999999999999993,
+		},
+		{
+			name: "case 2",
+			args: args{
+				expression: []string{"2", "*", "3", "-", "1", "/", "3", "*", "6"},
+			},
+			want: 4,
+		},
+		{
+			name: "case 3",
+			args: args{
+				expression: []string{"1", "*", "2", "*", "3"},
+			},
+			want: 6,
+		},
+		{
+			name: "case 4",
+			args: args{
+				expression: []string{"1", "+", "2", "+", "3"},
+			},
+			want: 6,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SimpleFourOperation(tt.args.expression); got != tt.want {
+				t.Errorf("SimpleFourOperation() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

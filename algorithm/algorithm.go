@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sort"
+	"strconv"
 	"time"
 )
 
@@ -1175,4 +1176,91 @@ func MergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
 		cursor = cursor.Next
 	}
 	return res.Next
+}
+
+//========================================= 简单四则运算 =========================================
+
+type SymbolType int
+
+var (
+	unknownSymbol SymbolType = 0
+	addSymbol     SymbolType = 1
+	subSymbol     SymbolType = 2
+	mulSymbol     SymbolType = 3
+	divSymbol     SymbolType = 4
+)
+
+// SimpleFourOperation 简单四则运算，
+// 解题的关键在于，每次遇到符号都判断一下前一个符号的优先级，高的话先计算前一个符号，再将当前符号入栈
+func SimpleFourOperation(expression []string) float64 {
+	symbolStack := list.New()
+	numStack := list.New()
+	for i := 0; i < len(expression); i++ {
+		operator := expression[i]
+		num, err := strconv.ParseFloat(operator, 64)
+		if err != nil {
+			// 遇到了符号
+			st := parseSymbol(operator)
+			if symbolStack.Len() > 0 {
+				// 如果此时栈顶的符号是*或/，从数字栈中弹出两个数字进行计算
+				// 即每次遇到符号，都判断一下此时栈顶是否有高优先级的符号，保证最终留在栈中的符号都是+或-
+				topType := symbolStack.Remove(symbolStack.Front())
+				if topType == mulSymbol {
+					nextNum := numStack.Remove(numStack.Front()).(float64)
+					preNum := numStack.Remove(numStack.Front()).(float64)
+					res := preNum * nextNum
+					numStack.PushFront(res)
+				} else if topType == divSymbol {
+					nextNum := numStack.Remove(numStack.Front()).(float64)
+					preNum := numStack.Remove(numStack.Front()).(float64)
+					res := preNum / nextNum
+					numStack.PushFront(res)
+				} else {
+					// 栈顶符号不是*或/，将栈顶符号重新放回
+					symbolStack.PushFront(topType)
+				}
+			}
+			// 符号入栈
+			symbolStack.PushFront(st)
+		} else {
+			// 遇到了数字
+			numStack.PushFront(num)
+		}
+	}
+	// 处理剩下的符号，注意剩下符号的第一个可能为*或者/，后面的都是+或者-
+	for symbolStack.Len() > 0 {
+		topType := symbolStack.Remove(symbolStack.Front())
+		next := numStack.Remove(numStack.Front()).(float64)
+		pre := numStack.Remove(numStack.Front()).(float64)
+		if topType == addSymbol {
+			res := pre + next
+			numStack.PushFront(res)
+		} else if topType == subSymbol {
+			res := pre - next
+			numStack.PushFront(res)
+		} else if topType == mulSymbol {
+			res := pre * next
+			numStack.PushFront(res)
+		} else {
+			res := pre / next
+			numStack.PushFront(res)
+		}
+	}
+	return numStack.Remove(numStack.Front()).(float64)
+}
+
+func parseSymbol(s string) SymbolType {
+	if s == "+" {
+		return addSymbol
+	}
+	if s == "-" {
+		return subSymbol
+	}
+	if s == "*" {
+		return mulSymbol
+	}
+	if s == "/" {
+		return divSymbol
+	}
+	return unknownSymbol
 }
