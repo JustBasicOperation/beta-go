@@ -1016,61 +1016,59 @@ func LengthOfLISII(nums []int, k int) int {
 
 //========================================= 反转字符串中的单词 =========================================
 
-func reverseWords(s string) string {
-	// 转换成字符串数组并去除空格
-	s1 := toByteArr(s)
-
-	// 原地翻转整个数组
-	reverseArr(s1, 0, len(s1)-1)
-
+func ReverseWords(s string) string {
+	byteArr := trimSpaceAndToArr(s)
+	// 先反转字符串
+	reverseArr(byteArr, 0, len(byteArr)-1)
+	// 反转单词
 	start := 0
-	// 遇到空格就翻转前面的单词
-	for i := 0; i < len(s1); i++ {
-		if s1[i] == ' ' {
-			reverseArr(s1, start, i-1)
+	for i := 0; i < len(byteArr); i++ {
+		// 遇到空格传入开始和结束位置的下标，闭区间
+		if byteArr[i] == ' ' {
+			reverseArr(byteArr, start, i-1)
+			// 重置开始指针下标
 			start = i + 1
 		}
 	}
-	// 翻转最后一个单词
-	if start < len(s1)-1 {
-		reverseArr(s1, start, len(s1)-1)
-	}
-	return string(s1)
+	// 反转最后一个单词
+	reverseArr(byteArr, start, len(byteArr)-1)
+	return string(byteArr)
 }
 
-// 如果是英文字母，转成字节数组即可，这里考虑到非英文字母的情况，转成rune数组，可以处理任意的utf-8字符串
-func toByteArr(s string) []byte {
-	res := make([]byte, 0, len(s))
-	// 双指针去掉多余的空格并转换成字符串数组
-	left := 0
-	right := len(s) - 1
-	// 去除开头的空格
-	for s[left] == ' ' && left < right {
+// 字符串转数组并去除多余的空格
+func trimSpaceAndToArr(s string) []byte {
+	var res []byte
+	for i := 0; i < len(s); i++ {
+		// 处理第一个字符就是空格的情况
+		if i == 0 && s[i] == ' ' {
+			res = append(res, s[i])
+			continue
+		}
+		// 去除重复的空格，只保留第一个
+		if s[i] == ' ' && s[i-1] == ' ' {
+			continue
+		}
+		res = append(res, s[i])
+	}
+	// 处理开头和结尾的空格
+	left, right := 0, len(res)-1
+	if res[0] == ' ' {
 		left++
 	}
-	// 去除末尾的空格
-	for s[right] == ' ' && left < right {
+	if res[right] == ' ' {
 		right--
 	}
-	// 去除中间的空格并将非空格字符添加到返回数组中
-	for left <= right {
-		if s[left] != ' ' {
-			res = append(res, s[left])
-		} else if s[left+1] != ' ' {
-			// 取中间连续空格的最后一个
-			res = append(res, s[left])
-		}
-		left++
-	}
-	return res
+	return res[left : right+1]
 }
 
+// 反转数组
 func reverseArr(s []byte, left, right int) {
 	for left < right {
 		s[left], s[right] = s[right], s[left]
 		left++
 		right--
 	}
+	return
 }
 
 //========================================= 最长公共子序列 =========================================
