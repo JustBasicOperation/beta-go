@@ -850,29 +850,31 @@ func get(nums []int, left, right int) Status {
 
 // LengthOfLIS 动态规划解法
 func LengthOfLIS(nums []int) int {
-	// 定义dp[i]表示以nums[i]结尾的最长递增子序列
-	// 状态转移方程：dp[i] = max(1, max(dp[j])+1)，其中0 <= j < i且nums[i]>nums[j]
-	// 也就是往dp[0...i-1]中最长的上升子序列后面再加一个nums[i](需要保证nums[i]>nums[j])，dp[i]=dp[0...i-1]中的最大值+1
+	// 定义dp[i]为以nums[i]结尾的最长递增子序列，nums[i]必须被选取
+	// dp[i] = max(dp[j])+1，如果nums[i] > nums[j]，0 <= j <= i-1
+	// 初始化条件，dp[0] = 1
 	dp := make([]int, len(nums), len(nums))
 	dp[0] = 1
+	maxLen := 1
 	for i := 1; i < len(nums); i++ {
-		dp[i] = 1 // 默认为自己，长度为1
-		for j := 0; j < i; j++ {
+		tempMax := 0
+		for j := i - 1; j >= 0; j-- {
+			// 找到满足nums[i] > nums[j]条件的所有dp[j]中的最大值
 			if nums[i] > nums[j] {
-				dp[i] = getMax(dp[i], dp[j]+1) // 这行代码可能会被执行多次，需要取其中最大的那次执行结果
+				tempMax = getMax(dp[j], tempMax)
 			}
 		}
+		dp[i] = tempMax + 1
+		// 这里取整个dp数组的最大值
+		// 并不是序列越长，最长递增子序列的长度就越长，也就是dp数组不是递增的
+		// 因为每加入一个新的元素，且新加入的元素必须被选取，会导致最长递增子序列发生变化，可能变长，也可能变短
+		maxLen = getMax(maxLen, dp[i])
 	}
-	var maxN int
-	for i := 0; i < len(dp); i++ {
-		if maxN < dp[i] {
-			maxN = dp[i]
-		}
-	}
-	return maxN
+	return maxLen
 }
 
 // LengthOfLISV2 解法二：贪心+二分
+// 也就是每次让最长递增子序列上升得尽可能慢，最后遍历完所有元素留下的就是最长递增子序列
 func LengthOfLISV2(nums []int) int {
 	// 定义d[i]为长度为i的最长递增子序列的最后一个元素的最小值
 	d := make([]int, len(nums)+1, len(nums)+1)
