@@ -511,3 +511,127 @@ func Test_lengthOfLIS(t *testing.T) {
 		})
 	}
 }
+
+func TestBSLeftBoundary(t *testing.T) {
+	type args struct {
+		nums   []int
+		left   int
+		right  int
+		target int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				nums:   []int{1, 3, 5, 7, 9},
+				left:   0,
+				right:  4,
+				target: 4,
+			},
+			want: 2,
+		},
+		{
+			name: "case2",
+			args: args{
+				nums:   []int{1, 3, 5, 7, 9},
+				left:   0,
+				right:  4,
+				target: 0,
+			},
+			want: 0,
+		},
+		{
+			name: "case3",
+			args: args{
+				nums:   []int{1, 3, 5, 7, 9},
+				left:   0,
+				right:  4,
+				target: 10,
+			},
+			want: -1,
+		},
+		{
+			name: "case4",
+			args: args{
+				nums:   []int{1, 3, 3, 3, 5, 5, 7, 9},
+				left:   0,
+				right:  4,
+				target: 4,
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := BSLeftBoundary(tt.args.nums, tt.args.left, tt.args.right, tt.args.target); got != tt.want {
+				t.Errorf("BSLeftBoundary() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestBSRightBoundary(t *testing.T) {
+	type args struct {
+		nums   []int
+		left   int
+		right  int
+		target int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				nums:   []int{1, 3, 5, 7, 9},
+				left:   0,
+				right:  4,
+				target: 4,
+			},
+			want: 1,
+		},
+		{
+			name: "case2",
+			args: args{
+				nums:   []int{1, 3, 5, 7, 9},
+				left:   0,
+				right:  4,
+				target: 14,
+			},
+			want: 4,
+		},
+		{
+			name: "case3",
+			args: args{
+				nums:   []int{1, 3, 5, 7, 9},
+				left:   0,
+				right:  4,
+				target: -1,
+			},
+			want: -1,
+		},
+		{
+			name: "case4",
+			args: args{
+				nums:   []int{1, 3, 5, 5, 5, 7, 7, 9},
+				left:   0,
+				right:  4,
+				target: 6,
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := BSRightBoundary(tt.args.nums, tt.args.left, tt.args.right, tt.args.target); got != tt.want {
+				t.Errorf("BSRightBoundary() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

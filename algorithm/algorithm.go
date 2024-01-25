@@ -1264,3 +1264,49 @@ func parseSymbol(s string) SymbolType {
 	}
 	return unknownSymbol
 }
+
+//========================================= 二分查找：等值查询，左边界和右边界 =========================================
+
+// BSLeftBoundary 二分查找左边界(包含相等)：1 3 5 <7 9 11>，target = 7, x = 7
+// 在递增数组nums中，找到一个数x >= target，下标为pos，使得nums[left,pos) < target，nums[pos,right] >= target
+// 即x左边的数都小于target，x及其右边的数都大于等于target，所以叫做左边界查询
+// 返回x的下标pos，如果没找到，返回-1
+// 有两种极端情况需要考虑：nums中所有数都小于target，此时返回-1，nums中所有数都大于target，此时返回0，即最初的左边界
+func BSLeftBoundary(nums []int, left, right, target int) int {
+	rightBoundary := right
+	for left <= right {
+		mid := (left + right) / 2
+		if nums[mid] >= target {
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+	}
+	// 走到这里说明left > right，检查下left有没有越界，或者没找到的情况
+	if left > rightBoundary || !(nums[left] >= target) {
+		return -1
+	}
+	return left
+}
+
+// BSRightBoundary 二分查找右边界(包含相等)：<1 3 5> 7 9 11，target = 5, x = 5
+// 在递增数组nums中，找到最后一个数x <= target，下标为pos，使得nums[left,pos] <= target，nums(pos,right) > target
+// 即x及其左边的数都小于target，x右边的数都大于等于target，所以叫做右边界查询
+// 返回x的下标pos，如果没找到，返回-1
+// 这里也有两种极端情况需要考虑：数组nums中所有数都小于target，此时返回最初的右边界right，数组中所有数都大于target，此时返回-1
+func BSRightBoundary(nums []int, left, right, target int) int {
+	leftBoundary := left
+	for left <= right {
+		mid := (left + right) / 2
+		if nums[mid] <= target {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+	// 走到这里说明left > right，检查下right有没有越界，或者没找到的情况
+	if right < leftBoundary || !(nums[right] <= target) {
+		return -1
+	}
+	return right
+}
