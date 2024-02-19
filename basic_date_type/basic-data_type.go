@@ -238,3 +238,51 @@ func change(s ...int) {
 	s = append(s, 3)
 	fmt.Printf("len: %d  cap: %d pointer: %p\n", len(s), cap(s), s)
 }
+
+type SliceEle struct {
+	A string
+	B int
+}
+
+func testPassIntSlice() {
+	s := []*SliceEle{
+		{
+			A: "1",
+			B: 1,
+		},
+		{
+			A: "2",
+			B: 2,
+		},
+	}
+	fmt.Printf("src s1: %v, %p\n", s[0], s[0])
+	fmt.Printf("src s2: %v, %p\n", s[1], s[1])
+	passSlicePtr(s)
+
+	// 下面这种方式传参会复制一个新的结构体给目标函数调用，会占用更多内存空间
+	//a := []SliceEle{
+	//	{
+	//		A: "3",
+	//		B: 3,
+	//	},
+	//	{
+	//		A: "4",
+	//		B: 4,
+	//	},
+	//}
+	//fmt.Printf("src s1: %v, %p\n", a[0], a[0])
+	//fmt.Printf("src s2: %v, %p\n", a[1], a[1])
+	//passSliceWithoutPtr(a)
+}
+
+func passSlicePtr(s []*SliceEle) {
+	for i, v := range s {
+		fmt.Printf("passIntSlice i: %v, v:  %p\n", i, v)
+	}
+}
+
+//func passSliceWithoutPtr(s []SliceEle) {
+//	for i, v := range s {
+//		fmt.Printf("passIntSlice i: %v, v:  %p\n", i, v)
+//	}
+//}

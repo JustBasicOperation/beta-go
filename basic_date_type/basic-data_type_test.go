@@ -110,3 +110,7 @@ func TestSlice20230726(t *testing.T) {
 	//fmt.Printf("s99: %v\n", s[99]) // panic: runtime error: index out of range [99] with length 2
 	fmt.Printf("s199: %v\n", s1[0]) // 空字符串
 }
+
+func Test_testPassIntSlice(t *testing.T) {
+	testPassIntSlice()
+}
