@@ -283,26 +283,23 @@ func (l *LRUCache) Get(key int) int {
 }
 
 func (l *LRUCache) Put(key int, value int) {
-	v, ok := l.nodeMap[key]
-	if ok {
+	// 如果已经存在，直接更新值并移动到头部，不用考虑容量是否超出
+	if v, ok := l.nodeMap[key]; ok {
 		// 更新值后，移动到头部
 		v.val = value
 		l.remove(v)
 		l.addToFront(v)
 		return
 	}
-	newNode := &MyListNode{}
-	newNode.val = value
-	newNode.key = key
-	// 不存在，但是容量满了
+	newNode := &MyListNode{
+		key: key,
+		val: value,
+	}
+	// 不存在，但是容量满了，先删除末尾元素，再添加
 	if len(l.nodeMap) >= l.cap {
 		lastNode := l.tail.pre
 		l.removeLast()
 		delete(l.nodeMap, lastNode.key)
-
-		l.addToFront(newNode)
-		l.nodeMap[key] = newNode
-		return
 	}
 	// 不存在，容量没满，直接添加
 	l.addToFront(newNode)
