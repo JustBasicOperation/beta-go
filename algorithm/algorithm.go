@@ -746,53 +746,54 @@ func qSort(arr []int, left, right, target int) {
 //=================================== k个一组翻转链表 =======================================
 
 func ReverseKGroup(head *ListNode, k int) *ListNode {
-	assistPtr := &ListNode{} // 定义一个辅助指针，指向head
+	// 整体思路：定义两个指针，prev和head
+	// prev为辅助指针，指向已翻转链表的最后一个节点，
+	// head为遍历指针依次遍历链表的每个节点，直到为nil
+	// 翻转时需要记录三个指针变量：start, end, next
+	// start和end分别为本次待翻转链表段的起始和结束节点
+	// next为下一段未翻转链表的起始节点
+	// 翻转时，先将待翻转链表段和原链表断开，翻转结束后再重新连接，并依次更新四个指针的值
+
+	// 在链表头前增加一个辅助节点
+	assistPtr := &ListNode{}
 	assistPtr.Next = head
 
-	// 初始化双指针，前驱指针和后继指针都指向辅助指针
-	// 前驱和后继指针的目的是为了将翻转后的链表重新插入正确的位置
-	pre, end := assistPtr, assistPtr
-	count := 0
-	for end != nil {
-		// end指针指向了待翻转链表的最后一个元素
-		if count == k {
-			next := end.Next  // 先记录下一组待翻转链表的第一个元素位置
-			start := pre.Next // 确定本组待翻转链表的起始位置
-
-			end.Next = nil // 断开连接后再去翻转链表
-			pre.Next = nil // 断开连接后再去翻转链表
-
-			// 翻转链表，翻转后，start虽然还是指向本组链表的第一个元素，但是需要放到原本end的位置
-			newStart := reverse(start)
-
-			pre.Next = newStart // 左边接上
-			start.Next = next   // 右边接上
-
-			// 重置pre，end指针和count计数器
-			pre = start
-			end = start
-			count = 0
-		} else {
-			end = end.Next
-			count++
+	prev := assistPtr
+	for head != nil {
+		for i := 0; i < k-1; i++ {
+			head = head.Next
+			// 如果head为nil，说明待翻转链表节点数少于k个，直接退出本次循环
+			if head == nil {
+				return assistPtr.Next
+			}
 		}
+		start := prev.Next
+		end := head
+		next := head.Next
+		// 解开链表，进行翻转
+		end.Next = nil
+		prev.Next = nil
+		reverse(start)
+		// 翻转后重新连接
+		prev.Next = end
+		start.Next = next
+		// 更新辅助指针和遍历指针的值
+		prev = start
+		head = next
 	}
-
 	return assistPtr.Next
 }
 
-// 注意这个方法不能修改传入的head值
 func reverse(head *ListNode) *ListNode {
-	var pre *ListNode
-	cursor := head
-	for cursor != nil {
-		next := cursor.Next
-		cursor.Next = pre
-
-		pre = cursor  // pre后移一个元素
-		cursor = next // cursor后移一个元素
+	var prev *ListNode
+	cur := head // 这里需要注意，翻转链表时不要修改传入节点head的值
+	for cur != nil {
+		next := cur.Next
+		cur.Next = prev
+		prev = cur
+		cur = next
 	}
-	return pre // 遍历结束后pre指向了链表的最后一个元素
+	return prev
 }
 
 //=================================== 最大子数组和 =======================================
