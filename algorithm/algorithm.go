@@ -54,7 +54,8 @@ func ThreeSum(nums []int) [][]int {
 		return nums[i] < nums[j] // 升序排序
 	})
 	for i := 0; i < length; i++ {
-		// 如果当前数字和前一个数字重复的话，直接跳过，这里要和前一位数比较
+		// 如果当前数字和前一个数字重复的话，直接跳过
+		// 这里必须和前面已经遍历过的数比较，否则会漏掉结果
 		if i > 0 && nums[i] == nums[i-1] {
 			continue
 		}
@@ -65,15 +66,15 @@ func ThreeSum(nums []int) [][]int {
 		left := i + 1
 		right := length - 1
 		for left < right {
-			// 必须在sum等于0的时候判断后面是否有重复数字并且直接跳到最后一个重复的数字
-			// 不能提前判断是否有重复数字，否则会跳过像000这样的结果
+			// 不能提前判断是否有重复数字，否则会漏掉结果
+			// 必须在sum等于0的时候判断后面是否有重复数字，因为此时任何重复的left或者right都会导致结果重复
 			sum := nums[i] + nums[left] + nums[right]
 			if sum == 0 {
-				// 如果三数之和等于0，直接跳到最后一个重复的数字，这里要和后一位数比较
+				// 判断left是否和后面的数据重复，不能和前面的数比较，否则会导致left和i比较，跳过left和i相同的三元组
 				for left < right && nums[left] == nums[left+1] {
 					left++
 				}
-				// 如果三数之和等于0，直接跳到最后一个重复的数字，这里要和后一位数比较
+				// 如果三数之和等于0，直接跳到最后一个重复的数字
 				for left < right && nums[right] == nums[right-1] {
 					right--
 				}
