@@ -1309,3 +1309,51 @@ func BSRightBoundary(nums []int, left, right, target int) int {
 	}
 	return right
 }
+
+//============================================= 最长回文子串 ==================================================
+
+// LongestPalindrome 最长回文子串，扩散法
+// 定义左右指针，左右指针之间的子串是回文串
+func LongestPalindrome(s string) string {
+	if len(s) == 1 {
+		return s
+	}
+	// 定义nums[i]为以s[i]为中心的最长回文子串
+	maxStr := ""
+	for i := 1; i < len(s); i++ {
+		tempStr := ""
+		// 先向左扩散：识别aaaa或aaa这种情况，a为奇数个和偶数个都是回文串
+		l := i - 1
+		for {
+			if l >= 0 && s[l] == s[i] {
+				l--
+			} else {
+				break
+			}
+		}
+		// 再向右扩散：识别aaaa或aaa这种情况，b为奇数个和偶数个都是回文串
+		r := i + 1
+		for {
+			if r < len(s) && s[r] == s[i] {
+				r++
+			} else {
+				break
+			}
+		}
+		// 走到这里说明l和r之间的子串是回文串，有三种可能的情况，分别是一个a, 奇数个aa和偶数个aaa
+		// 向两边扩散
+		for l >= 0 && r < len(s) {
+			if s[l] == s[r] {
+				l--
+				r++
+			} else {
+				break
+			}
+		}
+		tempStr = s[l+1 : r]
+		if len(tempStr) > len(maxStr) {
+			maxStr = tempStr
+		}
+	}
+	return maxStr
+}
