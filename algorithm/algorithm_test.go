@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
-	"sort"
 	"sync"
 	"testing"
 )
@@ -635,15 +634,4 @@ func TestBSRightBoundary(t *testing.T) {
 			}
 		})
 	}
-}
-
-func Test_backtrace(t *testing.T) {
-	nums := []string{"a", "b", "ab"}
-	sort.Slice(nums, func(i, j int) bool {
-		return nums[i] < nums[j]
-	})
-	flags := make([]bool, len(nums), len(nums))
-	var res [][]string
-	backtrace(nums, flags, []string{}, &res)
-	fmt.Println(res)
 }
