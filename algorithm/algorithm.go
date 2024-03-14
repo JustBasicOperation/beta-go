@@ -681,11 +681,11 @@ func LevelOrderTraversal(root *TreeNode) [][]int {
 func PathTarget(root *TreeNode, target int) [][]int {
 	var path []int // 保存路径中每个节点的值
 	var res [][]int
-	dfs(root, target, path, &res)
+	pathTargetDFS(root, target, path, &res)
 	return res
 }
 
-func dfs(root *TreeNode, target int, path []int, res *[][]int) {
+func pathTargetDFS(root *TreeNode, target int, path []int, res *[][]int) {
 	if root == nil {
 		return
 	}
@@ -703,8 +703,8 @@ func dfs(root *TreeNode, target int, path []int, res *[][]int) {
 	if sum == target && root.Left == nil && root.Right == nil {
 		*res = append(*res, tempPath)
 	}
-	dfs(root.Left, target, path, res)
-	dfs(root.Right, target, path, res)
+	pathTargetDFS(root.Left, target, path, res)
+	pathTargetDFS(root.Right, target, path, res)
 	// 本来这里应该要删除前面在path中添加的元素，方便回溯时不会对前面的路径产生干扰
 	// 但是因为go的切片特性不需要处理
 }
@@ -1356,4 +1356,64 @@ func LongestPalindrome(s string) string {
 		}
 	}
 	return maxStr
+}
+
+//============================================= 全排列 ==================================================
+
+func Permute(nums []int) [][]int {
+	var res [][]int
+	used := make([]bool, len(nums), len(nums))
+	permuteDFS(nums, []int{}, used, &res)
+	return res
+}
+
+func permuteDFS(nums, path []int, used []bool, res *[][]int) {
+	if len(path) == len(nums) {
+		*res = append(*res, append([]int{}, path...))
+		return
+	}
+	for i := 0; i < len(nums); i++ {
+		if used[i] {
+			continue
+		}
+		path = append(path, nums[i])
+		used[i] = true
+		permuteDFS(nums, path, used, res)
+		// 撤销操作
+		path = path[:len(path)-1]
+		used[i] = false
+	}
+}
+
+//============================================= 全排列II ==================================================
+
+func PermuteUnique(nums []int) [][]int {
+	var res [][]int
+	used := make([]bool, len(nums), len(nums))
+	permute2DFS(nums, []int{}, used, &res)
+	return res
+}
+
+func permute2DFS(nums, path []int, used []bool, res *[][]int) {
+	if len(path) == len(nums) {
+		*res = append(*res, append([]int{}, path...))
+		return
+	}
+	m := make(map[int]struct{})
+	for i := 0; i < len(nums); i++ {
+		if used[i] {
+			continue
+		}
+		// 剪枝，之前已经遍历过的元素直接跳过，防止重复
+		if _, ok := m[nums[i]]; ok {
+			continue
+		}
+		path = append(path, nums[i])
+		used[i] = true
+		m[nums[i]] = struct{}{}
+		permute2DFS(nums, path, used, res)
+		// 撤销操作
+		path = path[:len(path)-1]
+		used[i] = false
+	}
 }
