@@ -114,3 +114,9 @@ func TestSlice20230726(t *testing.T) {
 func Test_testPassIntSlice(t *testing.T) {
 	testPassIntSlice()
 }
+
+func Test_modifyString(t *testing.T) {
+	s := "abc"
+	s1 := s[:3]
+	fmt.Println(s1)
+}
