@@ -1417,3 +1417,23 @@ func permute2DFS(nums, path []int, used []bool, res *[][]int) {
 		used[i] = false
 	}
 }
+
+//============================================= 跳跃游戏II ==================================================
+
+// JumpII 贪心反向查找解法
+func JumpII(nums []int) int {
+    pos := len(nums)-1
+    var step int
+    for pos > 0 {
+        // 从左往右找前一个能到达pos位置的起跳点，直到pos位置等于0
+        // 为什么要从左往右：前一个起跳点越接近下标0，才能使得跳跃次数越少，贪心思想
+        // 找到了就更新pos的位置，并且增加跳跃次数
+        for i := 0;i < pos;i++ {
+            if i + nums[i] >= pos {
+                pos = i
+                step++
+            }
+        }
+    }
+    return step
+}
