@@ -1420,7 +1420,7 @@ func permute2DFS(nums, path []int, used []bool, res *[][]int) {
 
 //============================================= 跳跃游戏II ==================================================
 
-// JumpII 贪心反向查找解法
+// JumpII 贪心反向查找解法（时间复杂度高）
 func JumpII(nums []int) int {
     pos := len(nums)-1
     var step int
@@ -1434,6 +1434,27 @@ func JumpII(nums []int) int {
                 step++
             }
         }
+    }
+    return step
+}
+
+// JumpIIV2 贪心正向查找解法
+func JumpIIV2(nums []int) int {
+    var start int
+    var end int
+    var step int
+    // 注意这里的循环条件为end<len(nums-1)，只需要到倒数第二个位置即可
+    // 因为每次循环结束，下标已经跳到了下一个区间，如果到最后一个区间才结束循环会多跳一次
+    for end < len(nums)-1 {
+        var maxPos int
+        // 遍历区间[start,end]，找到最大的起跳点并更新能够跳到的最远距离
+        for i := start;i <= end;i++ {
+            // 更新能够跳到的最远距离
+            maxPos = getMax(maxPos, i + nums[i])
+        }
+        start = end+1 // 下一个区间的开始下标
+        end = maxPos // 下一个区间的结束下标
+        step++ // 增加一次跳跃次数，因为从上一个区间跳到了下一个区间
     }
     return step
 }
