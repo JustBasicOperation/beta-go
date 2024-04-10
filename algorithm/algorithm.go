@@ -1578,3 +1578,32 @@ func (this *RandomizedSet) GetRandom() int {
 	r := rand.Intn(len(this.nums))
 	return this.nums[r]
 }
+
+//============================================= 除自身以外数组的乘积 ==============================================
+
+// ProductExceptSelf
+func ProductExceptSelf(nums []int) []int {
+	// left[i]表示nums[i]左侧所有元素的乘积，不包括nums[i]
+	left := make([]int, len(nums), len(nums))
+	// right[j]表示nums[j]右侧所有元素的乘积，包括nums[j]
+	right := make([]int, len(nums), len(nums))
+	left[0] = 1
+	for i := 0; i < len(nums); i++ {
+		if i == 0 {
+			continue
+		}
+		left[i] = left[i-1] * nums[i-1]
+	}
+	right[len(nums)-1] = 1
+	for j := len(nums) - 1; j >= 0; j-- {
+		if j == len(nums)-1 {
+			continue
+		}
+		right[j] = right[j+1] * nums[j+1]
+	}
+	res := make([]int, len(nums), len(nums))
+	for k := 0; k < len(nums); k++ {
+		res[k] = left[k] * right[k]
+	}
+	return res
+}
