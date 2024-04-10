@@ -1478,3 +1478,103 @@ func JumpIIV2(nums []int) int {
 	}
 	return step
 }
+
+//============================================= 买卖股票的最佳时机 ==================================================
+
+func MaxProfit(prices []int) int {
+	// 本解法本质上是动态规划解法的空间优化版
+	// 定义dp[i]为前i天的最低价格，dp[i] = min(dp[i-1], prices[i])
+	// 第i天的最大利润就是第i天的价格减去前i天的最低价格
+	// profit[i] = max(profit[i-1], prices[i]-dp[i])
+	var minPrices, maxProfit int
+	minPrices = prices[0]
+	for i := 0; i < len(prices); i++ {
+		if i == 0 {
+			continue
+		}
+		if prices[i] < minPrices {
+			minPrices = prices[i]
+		} else {
+			maxProfit = getMax(maxProfit, prices[i]-minPrices)
+		}
+	}
+	return maxProfit
+}
+
+//============================================= 买卖股票的最佳时机II ==================================================
+
+func maxProfitII(prices []int) int {
+	var max int
+	for i := 0; i < len(prices); i++ {
+		if i == 0 {
+			continue
+		}
+		sub := prices[i] - prices[i-1]
+		if sub > 0 {
+			max += sub
+		}
+	}
+	return max
+}
+
+//============================================= H指数 ==================================================
+
+// HIndex H指数
+func HIndex(citations []int) int {
+	sort.Ints(citations) // 升序排序
+	var h int
+	n := len(citations)
+	// 从后往前遍历
+	for i := n - 1; i >= 0; i-- {
+		// 如果citations[i] >= n-i，则说明citations[i]及其后面的共n-i个数都大于等于n-i，此时n-i就是新的h指数
+		// 更新h的值，不断向前遍历，找到最大的h。
+		if citations[i] >= n-i {
+			h = n - i
+		}
+	}
+	return h
+}
+
+//============================================= O(1) 时间插入、删除和获取随机元素 ==============================================
+
+type RandomizedSet struct {
+	m    map[int]int
+	nums []int
+}
+
+func NewRandomizedSet() RandomizedSet {
+	return RandomizedSet{
+		m:    map[int]int{},
+		nums: []int{},
+	}
+}
+
+func (this *RandomizedSet) Insert(val int) bool {
+	if _, ok := this.m[val]; ok {
+		return false
+	}
+	this.nums = append(this.nums, val)
+	this.m[val] = len(this.nums) - 1
+	return true
+}
+
+func (this *RandomizedSet) Remove(val int) bool {
+	if _, ok := this.m[val]; ok {
+		// 将数组中最后一个元素放到被删除元素的位置
+		// 同时更新最后一个元素在map中的下标
+		idx := this.m[val]
+		lastEle := this.nums[len(this.nums)-1]
+		this.nums[idx] = lastEle
+		this.m[lastEle] = idx
+
+		this.nums = this.nums[:len(this.nums)-1] // 移除数组最后一个元素
+		delete(this.m, val)                      // 删除map中的被删除元素
+		return true
+	}
+	return false
+}
+
+func (this *RandomizedSet) GetRandom() int {
+	r := rand.Intn(len(this.nums))
+	return this.nums[r]
+}
