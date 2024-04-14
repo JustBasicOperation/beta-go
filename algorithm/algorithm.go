@@ -1607,3 +1607,81 @@ func ProductExceptSelf(nums []int) []int {
 	}
 	return res
 }
+
+//============================================= 加油站 ==============================================
+
+// CanCompleteCircuit ...
+func CanCompleteCircuit(gas []int, cost []int) int {
+	n := len(gas)
+	for i := 0; i < n; {
+		var sumOfGas, sumOfCost int
+		var count int // 记录前进的步数
+		var pos int   // 记录退出循环时的位置，判断是否有满足条件的解时要用到
+		// j表示前进的步数，j=0表示原地走一步
+		for j := 0; j <= n; j++ {
+			p := (i + j) % n
+			sumOfGas += gas[p]
+			sumOfCost += cost[p]
+			if sumOfGas < sumOfCost {
+				pos = p
+				break
+			}
+			pos = p
+			count++
+		}
+		// 找到了，直接返回，循环一圈需要走n+1步，注意这里不能用pos==i来替换判断
+		if count == n+1 {
+			return i
+		}
+		// pos在i前面，说明找不到，返回-1
+		if pos < i {
+			return -1
+		}
+		// pos在i后面，跳到pos+1的位置继续尝试
+		i = pos + 1
+	}
+	return -1
+}
+
+//============================================= 分发糖果 ==============================================
+
+// Candy 分发糖果
+// 思路：
+// 先从左到右遍历，如果ratings[i] > ratings[i-1], left[i] = left[i-1]+1, 否则left[i]=1
+// 再从右到左遍历，如果ratins[i] > ratings[i+1], right[i] = right[i+1]+1, 否则right[i]=1
+// 最后位置i的糖果数为max(left[i],right[i])
+func Candy(ratings []int) int {
+	leftRes := make([]int, len(ratings), len(ratings))
+	for i := 0; i < len(ratings); i++ {
+		if i == 0 {
+			leftRes[i] = 1 // 注意需要初始化leftRes[0]为1
+			continue
+		}
+		if ratings[i] > ratings[i-1] {
+			leftRes[i] = leftRes[i-1] + 1
+		} else {
+			leftRes[i] = 1
+		}
+	}
+	rightRes := make([]int, len(ratings), len(ratings))
+	for i := len(ratings) - 1; i >= 0; i-- {
+		if i == len(ratings)-1 {
+			rightRes[i] = 1 // 注意需要初始化rightRes[len(ratings)-1]为1
+			continue
+		}
+		if ratings[i] > ratings[i+1] {
+			rightRes[i] = rightRes[i+1] + 1
+		} else {
+			rightRes[i] = 1
+		}
+	}
+	var res int
+	for i := 0; i < len(ratings); i++ {
+		if leftRes[i] > rightRes[i] {
+			res += leftRes[i]
+		} else {
+			res += rightRes[i]
+		}
+	}
+	return res
+}
