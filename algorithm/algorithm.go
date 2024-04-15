@@ -1685,3 +1685,33 @@ func Candy(ratings []int) int {
 	}
 	return res
 }
+
+//============================================= 接雨水 ==============================================
+
+// Trap 接雨水双指针解法
+func Trap(height []int) int {
+	// 整体思路，位置i能接的雨水数量等于左右两边最高的柱子中较低的那个柱子减去当前柱子的高度
+	// 即cap[i] = min(max(left),max(right))-height[i]; 0 <= left< i,i < right <len(height)
+	var res int
+	l, r := 0, len(height)-1
+	var lMax, rMax int
+	for l < r {
+		// 维护lMax
+		if height[l] > lMax {
+			lMax = height[l]
+		}
+		// 维护rMax
+		if height[r] > rMax {
+			rMax = height[r]
+		}
+		// 用左右两边较小的最大值来计算接雨水的数量
+		if lMax < rMax {
+			res += lMax - height[l]
+			l++
+		} else {
+			res += rMax - height[r]
+			r--
+		}
+	}
+	return res
+}
