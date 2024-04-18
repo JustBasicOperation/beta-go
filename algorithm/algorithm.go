@@ -1706,11 +1706,72 @@ func Trap(height []int) int {
 		}
 		// 用左右两边较小的最大值来计算接雨水的数量
 		if lMax < rMax {
-			res += lMax - height[l]
+			res += lMax - height[l] // 如果l==lMax，则res += 0，不影响最终结果
 			l++
 		} else {
-			res += rMax - height[r]
+			res += rMax - height[r] // 如果r==rMax，则res += 0，不影响最终结果
 			r--
+		}
+	}
+	return res
+}
+
+//============================================= 整数转罗马数字 ==============================================
+
+// IntToRoman 整数转罗马数字
+// 思路：每次尽可能减去最大的罗马数字，直到num等于0
+func IntToRoman(num int) string {
+	m := map[int]string{
+		1:    "I",
+		5:    "V",
+		10:   "X",
+		50:   "L",
+		100:  "C",
+		500:  "D",
+		1000: "M",
+		4:    "IV",
+		40:   "XL",
+		400:  "CD",
+		9:    "IX",
+		90:   "XC",
+		900:  "CM",
+	}
+	order := []int{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1}
+	var res string
+	for i := 0; i < len(order); i++ {
+		for true {
+			sub := num - order[i]
+			if sub >= 0 {
+				res += m[order[i]]
+				num = sub
+			} else {
+				break
+			}
+		}
+	}
+	return res
+}
+
+//============================================= 罗马数字转整数 ==============================================
+
+// RomanToInt 罗马数字转整数
+func RomanToInt(s string) int {
+	m := map[byte]int{
+		'I': 1,
+		'V': 5,
+		'X': 10,
+		'L': 50,
+		'C': 100,
+		'D': 500,
+		'M': 1000,
+	}
+	var res int
+	for i := 0; i < len(s); i++ {
+		// 遇到类似IV,IX,XL等情况，直接减去I或者X即可，然后继续处理下一位
+		if i < len(s)-1 && m[s[i]] < m[s[i+1]] {
+			res -= m[s[i]]
+		} else {
+			res += m[s[i]]
 		}
 	}
 	return res
