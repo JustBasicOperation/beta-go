@@ -635,3 +635,22 @@ func TestBSRightBoundary(t *testing.T) {
 		})
 	}
 }
+
+func appendStr() func(b string) string {
+	t := "Hello"
+	c := func(b string) string {
+		t = t + " " + b
+		return t
+	}
+	return c
+}
+
+func Test01(t *testing.T) {
+	a := appendStr()
+	b := appendStr()
+	fmt.Println(a("World"))
+	fmt.Println(b("Everyone"))
+
+	fmt.Println(a("Gopher"))
+	fmt.Println(b("!"))
+}
