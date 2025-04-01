@@ -654,3 +654,37 @@ func Test01(t *testing.T) {
 	fmt.Println(a("Gopher"))
 	fmt.Println(b("!"))
 }
+
+func TestMaxNumLessN(t *testing.T) {
+	type args struct {
+		n    int
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			args: args{
+				n:    23121,
+				nums: []int{2, 4, 9},
+			},
+			want: 22999,
+		},
+		{
+			args: args{
+				n:    23333,
+				nums: []int{2, 3},
+			},
+			want: 23332,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := MaxNumLessN(tt.args.n, tt.args.nums); got != tt.want {
+				t.Errorf("MaxNumLessN() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

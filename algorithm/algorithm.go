@@ -1776,3 +1776,76 @@ func RomanToInt(s string) int {
 	}
 	return res
 }
+
+//============================================= 罗马数字转整数 ==============================================
+
+// MaxNumLessN 小于n的最大值
+func MaxNumLessN(n int, nums []int) int {
+	// 取余运算获取n各个位上的数字
+	var nArr []int
+	copyN := n
+	for copyN > 0 {
+		b := copyN % 10
+		nArr = append(nArr, b)
+		copyN = copyN / 10
+	}
+	// 对于n的每一位在nums中查找小于等于n的数字
+	var targetNums []int
+	var find bool
+	for i := len(nArr) - 1; i >= 0; i-- {
+		curNum := nArr[i]
+		targetNum := findLessAndEqualNum(nums, curNum)
+		targetNums = append(targetNums, targetNum)
+		// 如果targetNum小于curNum，直接用nums中最大的数字填充剩余的位
+		if targetNum < curNum {
+			find = true
+			break // 直接退出循环
+		}
+	}
+	if find {
+		m := findMax(nums)
+		for len(targetNums) < len(nArr) {
+			targetNums = append(targetNums, m)
+		}
+	}
+	// targetNums还原为数字
+	var sum int
+	for _, num := range targetNums {
+		sum = sum*10 + num
+	}
+	if sum == n {
+		sum = sum / 10
+		sum = sum*10 + findLessNum(nums, targetNums[len(targetNums)-1])
+	}
+	return sum
+}
+
+func findLessNum(nums []int, num int) int {
+	res := num
+	for i := 0; i < len(nums); i++ {
+		if nums[i] < num {
+			res = nums[i]
+		}
+	}
+	return res
+}
+
+func findLessAndEqualNum(nums []int, num int) int {
+	res := num
+	for i := 0; i < len(nums); i++ {
+		if nums[i] <= num {
+			res = nums[i]
+		}
+	}
+	return res
+}
+
+func findMax(nums []int) int {
+	var res int
+	for i := 0; i < len(nums); i++ {
+		if nums[i] > res {
+			res = nums[i]
+		}
+	}
+	return res
+}
